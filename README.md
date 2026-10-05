@@ -11,7 +11,7 @@
 - 진료기록 조회
 - 관리자: 오늘 예약 현황, 진료 스케줄 관리
 
-## 🧰기술 스택
+## 🛠️기술 스택
 
 JSP · Bootstrap · Servlet(MVC) · Java · MyBatis · Oracle
 
