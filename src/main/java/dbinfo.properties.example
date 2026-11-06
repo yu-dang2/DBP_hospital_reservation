@@ -1,0 +1,4 @@
+db.driver=oracle.jdbc.driver.OracleDriver
+db.url=jdbc:oracle:thin:@localhost:1521/xepdb1
+db.username=여기에_계정
+db.password=여기에_비밀번호
