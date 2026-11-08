@@ -2,11 +2,17 @@ package hospital.model.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import hospital.model.domain.MedicalRecord;
+import hospital.model.domain.MedicalRecordSummary;
+import hospital.model.domain.ReservationStatus;
 import util.JDBCUtil;
 
 public class MedicalRecordDAO {
+    private static final int RECENT_LIMIT = 5;   // 마이페이지에 보여줄 최근 기록 수
+
     private JDBCUtil jdbcUtil = null;
 
     public MedicalRecordDAO() {
@@ -66,5 +72,43 @@ public class MedicalRecordDAO {
         } finally {
             jdbcUtil.close();
         }
+    }
+
+    // [마이페이지] 회원 본인의 진료완료 예약에 연결된 진료기록을 최근 순으로 최대 5건 조회
+    // 다른 회원의 기록은 MEMBER_ID 조건으로 제외, 결과가 없으면 빈 리스트 반환
+    // 진료일은 실제 진료한 날인 예약 일시를 사용 (RECORD_DATE는 기록 작성일이며 NULL 가능)
+    public List<MedicalRecordSummary> findRecentByMemberId(Long memberId) {
+        List<MedicalRecordSummary> recordList = new ArrayList<MedicalRecordSummary>();
+
+        StringBuffer query = new StringBuffer();
+        query.append("SELECT * FROM ( ");
+        query.append("    SELECT MR.RECORD_ID, R.RESERVATION_DATE, D.NAME AS DOCTOR_NAME, MR.DIAGNOSIS ");
+        query.append("    FROM MEDICAL_RECORD MR ");
+        query.append("    JOIN RESERVATION R ON R.RESERVATION_ID = MR.RESERVATION_ID ");
+        query.append("    JOIN DOCTOR D      ON D.DOCTOR_ID = R.DOCTOR_ID ");
+        query.append("    WHERE R.MEMBER_ID = ? AND R.STATUS = ? ");
+        query.append("    ORDER BY R.RESERVATION_DATE DESC, MR.RECORD_ID DESC ");
+        query.append(") WHERE ROWNUM <= ? ");
+
+        jdbcUtil.setSqlAndParameters(query.toString(), new Object[] {
+            memberId, ReservationStatus.COMPLETED.name(), RECENT_LIMIT });
+
+        try {
+            ResultSet rs = jdbcUtil.executeQuery();
+
+            while (rs.next()) {
+                recordList.add(new MedicalRecordSummary(
+                        rs.getLong("RECORD_ID"),
+                        rs.getTimestamp("RESERVATION_DATE").toLocalDateTime().toLocalDate(),
+                        rs.getString("DOCTOR_NAME"),
+                        rs.getString("DIAGNOSIS")));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            jdbcUtil.close();
+        }
+
+        return recordList;
     }
 }
