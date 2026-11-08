@@ -14,8 +14,8 @@ public class ReservationDAOTest {
         ReservationDAO reservationDAO = new ReservationDAO();
         SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date reservedDay = dayFormat.parse("2026-11-09");
-        Date emptyDay = dayFormat.parse("2026-11-10");
+        Date reservedDay = dayFormat.parse("2026-11-16");
+        Date emptyDay = dayFormat.parse("2026-11-17");
 
         // 1. 조건 없이 목록 조회
         List<Reservation> allList = reservationDAO.search(null, null, null);
@@ -60,7 +60,7 @@ public class ReservationDAOTest {
     // 상태 복구 (DAO에 없는 동작이라 테스트에서만 직접 실행)
     private static void restoreStatus(Long reservationId) throws Exception {
         JDBCUtil jdbcUtil = new JDBCUtil();
-        jdbcUtil.setSqlAndParameters("UPDATE RESERVATION SET STATUS = 'RESERVED' WHERE RESERVATION_ID = ?",
+        jdbcUtil.setSqlAndParameters("UPDATE RESERVATION SET STATUS = 'R' WHERE RESERVATION_ID = ?",
                 new Object[] { reservationId });
         try {
             jdbcUtil.executeUpdate();

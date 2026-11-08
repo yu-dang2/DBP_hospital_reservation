@@ -91,7 +91,7 @@ public class MedicalRecordDAO {
         query.append(") WHERE ROWNUM <= ? ");
 
         jdbcUtil.setSqlAndParameters(query.toString(), new Object[] {
-            memberId, ReservationStatus.COMPLETED.name(), RECENT_LIMIT });
+            memberId, ReservationStatus.COMPLETED.getCode(), RECENT_LIMIT });
 
         try {
             ResultSet rs = jdbcUtil.executeQuery();

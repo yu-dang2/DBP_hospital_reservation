@@ -82,7 +82,7 @@ public class DoctorOffDAO {
             off.getDoctorId(),
             toDayStart(off.getOffDate()),
             off.getReason(),
-            off.getSource().name()
+            off.getSource().getCode()
         };
 
         return executeDml(query.toString(), params);
@@ -145,7 +145,7 @@ public class DoctorOffDAO {
         // DoctorOff.isOn()의 equals 비교가 동작하도록 java.util.Date로 변환
         off.setOffDate(new Date(rs.getTimestamp("OFF_DATE").getTime()));
         off.setReason(rs.getString("REASON"));
-        off.setSource(OffSource.valueOf(rs.getString("SOURCE")));
+        off.setSource(OffSource.fromCode(rs.getString("SOURCE")));
         return off;
     }
 

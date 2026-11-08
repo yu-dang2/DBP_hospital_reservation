@@ -181,7 +181,7 @@ public class ReservationDAO {
         Reservation reservation = new Reservation();
         reservation.setReservationId(rs.getLong("RESERVATION_ID"));
         reservation.setReservationDate(toDate(rs.getTimestamp("RESERVATION_DATE")));
-        reservation.setStatus(ReservationStatus.valueOf(rs.getString("STATUS")));
+        reservation.setStatus(ReservationStatus.fromCode(rs.getString("STATUS")));
         reservation.setMember(member);
         reservation.setDoctor(doctor);
         return reservation;

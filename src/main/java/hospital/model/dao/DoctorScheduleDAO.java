@@ -23,11 +23,7 @@ public class DoctorScheduleDAO {
         query.append("SELECT SCHEDULE_ID, DOCTOR_ID, DAY_OF_WEEK, START_TIME, END_TIME, DAY_OFF ");
         query.append("FROM DOCTOR_SCHEDULE ");
         query.append("WHERE DOCTOR_ID = ? ");
-        query.append("ORDER BY CASE DAY_OF_WEEK ");
-        query.append("           WHEN 'MONDAY' THEN 1 WHEN 'TUESDAY' THEN 2 WHEN 'WEDNESDAY' THEN 3 ");
-        query.append("           WHEN 'THURSDAY' THEN 4 WHEN 'FRIDAY' THEN 5 WHEN 'SATURDAY' THEN 6 ");
-        query.append("           WHEN 'SUNDAY' THEN 7 ");
-        query.append("         END, START_TIME ");
+        query.append("ORDER BY DAY_OF_WEEK, START_TIME ");
 
         jdbcUtil.setSqlAndParameters(query.toString(), new Object[] { doctorId });
 
