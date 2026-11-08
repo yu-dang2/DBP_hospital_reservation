@@ -67,10 +67,10 @@ public class ReservationDAO {
         StringBuffer query = new StringBuffer();
         query.append("UPDATE RESERVATION ");
         query.append("SET STATUS = ? ");
-        query.append("WHERE RESERVATION_ID = ? AND STATUS = 'RESERVED' ");
+        query.append("WHERE RESERVATION_ID = ? AND STATUS = 'R' ");
 
         jdbcUtil.setSqlAndParameters(query.toString(),
-                new Object[] { status.name(), reservationId });
+                new Object[] { status.getCode(), reservationId });
 
         try {
             int result = jdbcUtil.executeUpdate();
@@ -113,7 +113,7 @@ public class ReservationDAO {
         }
         if (status != null) {
             query.append("AND R.STATUS = ? ");
-            params.add(status.name());
+            params.add(status.getCode());
         }
         query.append("ORDER BY R.RESERVATION_DATE, R.RESERVATION_ID ");
 
@@ -142,7 +142,7 @@ public class ReservationDAO {
         query.append("FROM RESERVATION ");
         query.append("WHERE DOCTOR_ID = ? ");
         query.append("  AND RESERVATION_DATE >= ? AND RESERVATION_DATE < ? ");
-        query.append("  AND STATUS = 'RESERVED' ");
+        query.append("  AND STATUS = 'R' ");
 
         jdbcUtil.setSqlAndParameters(query.toString(),
                 new Object[] { doctorId, toDayStart(date, 0), toDayStart(date, 1) });

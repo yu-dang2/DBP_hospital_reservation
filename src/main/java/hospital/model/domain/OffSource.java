@@ -2,7 +2,7 @@ package hospital.model.domain;
 
 public enum OffSource {
     MANUAL("M"),   
-    HOLIDAY("H");
+    HOLIDAY_API("H");
     
     private final String code;   // DB에 저장할 코드값
 

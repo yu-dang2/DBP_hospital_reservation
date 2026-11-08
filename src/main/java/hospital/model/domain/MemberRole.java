@@ -1,7 +1,7 @@
 package hospital.model.domain;
 
 public enum MemberRole {
-    MAMBER("M"),
+    MEMBER("M"),
     ADMIN("A");
     
     private final String code;   // DB에 저장할 코드값
