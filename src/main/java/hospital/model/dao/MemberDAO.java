@@ -57,7 +57,7 @@ public class MemberDAO {
         }
     }
 
-    // 신규 회원 등록. MEMBER_ID는 SEQ_MEMBER_ID.NEXTVAL, member.getPassword()는 Manager가 해시한 값이어야 한다.
+    // 신규 회원 등록. MEMBER_ID는 SEQ_MEMBER.NEXTVAL, member.getPassword()는 Manager가 해시한 값이어야 한다.
     public long insert(Member member) {
         long memberId = nextMemberId();
 
@@ -68,12 +68,18 @@ public class MemberDAO {
         JDBCUtil jdbcUtil = new JDBCUtil();
         try {
             jdbcUtil.setSqlAndParameters(query.toString(), new Object[] {
-                    memberId, member.getUserId(), member.getPassword(), member.getName(),
-                    member.getBirth(), member.getPhone(), member.getEmail(), member.getRole(),
+                    memberId, 
+                    member.getUserId(), 
+                    member.getPassword(), 
+                    member.getName(),
+                    toTimestamp(member.getBirth()),
+                     member.getPhone(),
+                      member.getEmail(), 
+                     member.getRole().name,
                     STATUS_ACTIVE });
             jdbcUtil.executeUpdate();
             jdbcUtil.commit();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             jdbcUtil.rollback();
             throw new DaoException("insert 실패: " + member.getUserId(), ex);
         } finally {
@@ -100,10 +106,10 @@ public class MemberDAO {
 
         Object[] params;
         if (changePassword) {
-            params = new Object[] { member.getPassword(), member.getName(), member.getBirth(),
+            params = new Object[] { member.getPassword(), member.getName(), toTimestamp(member.getBirth()),
                     member.getPhone(), member.getEmail(), member.getMemberId(), STATUS_ACTIVE };
         } else {
-            params = new Object[] { member.getName(), member.getBirth(),
+            params = new Object[] { member.getName(), toTimestamp(member.getBirth()),
                     member.getPhone(), member.getEmail(), member.getMemberId(), STATUS_ACTIVE };
         }
 
@@ -113,7 +119,7 @@ public class MemberDAO {
             int rows = jdbcUtil.executeUpdate();
             jdbcUtil.commit();
             return rows;
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             jdbcUtil.rollback();
             throw new DaoException("update 실패: memberId=" + member.getMemberId(), ex);
         } finally {
@@ -135,7 +141,7 @@ public class MemberDAO {
             int rows = jdbcUtil.executeUpdate();
             jdbcUtil.commit();
             return rows;
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             jdbcUtil.rollback();
             throw new DaoException("markWithdrawn 실패: memberId=" + memberId, ex);
         } finally {
@@ -147,7 +153,7 @@ public class MemberDAO {
 
     private long nextMemberId() {
         StringBuffer query = new StringBuffer();
-        query.append("SELECT SEQ_MEMBER_ID.NEXTVAL AS MEMBER_ID ");
+        query.append("SELECT SEQ_MEMBER.NEXTVAL AS MEMBER_ID ");
         query.append("FROM DUAL ");
 
         JDBCUtil jdbcUtil = new JDBCUtil();
@@ -157,7 +163,7 @@ public class MemberDAO {
             rs.next();
             return rs.getLong("MEMBER_ID");
         } catch (SQLException ex) {
-            throw new DaoException("SEQ_MEMBER_ID 조회 실패", ex);
+            throw new DaoException("SEQ_MEMBER 조회 실패", ex);
         } finally {
             jdbcUtil.close();
         }
@@ -185,12 +191,16 @@ public class MemberDAO {
         member.setUserId(rs.getString("USER_ID"));
         member.setPassword(rs.getString("PASSWORD"));
         member.setName(rs.getString("NAME"));
-        member.setBirth(rs.getObject("BIRTH", LocalDate.class));
+        member.setBirth(rs.getDate("BIRTH"));
         member.setPhone(rs.getString("PHONE"));
         member.setEmail(rs.getString("EMAIL"));
-        member.setRole(rs.getString("ROLE"));
-        member.setStatus(rs.getString("STATUS"));
-        member.setCreatedAt(rs.getObject("CREATED_AT", LocalDateTime.class));
+        member.setRole(MemberRole.valueOf(rs.getString("ROLE")));
+        member.setStatus(MemberStatus.valueOf(rs.getString("STATUS")));
+        member.setCreatedAt(rs.getTimestamp("CREATED_AT"));
         return member;
+    }
+      // java.util.Date를 DB 전달용 Timestamp로 변환 (null이면 null)
+    private Timestamp toTimestamp(Date date) {
+        return date == null ? null : new Timestamp(date.getTime());
     }
 }
