@@ -2,13 +2,10 @@ package hospital.model.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.sql.Timestamp;
 import java.util.Date;
-import MemberRole;
-import MemberStatus;
-
+import hospital.model.domain.MemberRole; 
+import hospital.model.domain.MemberStatus;
 import hospital.model.domain.GeneralMember;
 import hospital.model.domain.Member;
 import util.JDBCUtil;
@@ -18,10 +15,6 @@ import util.JDBCUtil;
  * 업무 규칙(비밀번호 해싱, 본인 확인, 중복 결과 해석)은 MemberManager가 담당한다.
  */
 public class MemberDAO {
-
-    public static final String MemberStatus.ACTIVE.getCode() = "ACTIVE";
-    public static final String WITHDRAWN.getCode() = "WITHDRAWN";
-
     private static final String SELECT_MEMBER_COLUMNS =
             "SELECT MEMBER_ID, USER_ID, PASSWORD, NAME, BIRTH, PHONE, EMAIL, ROLE, STATUS, CREATED_AT "
           + "FROM MEMBER ";
@@ -79,7 +72,7 @@ public class MemberDAO {
                     toTimestamp(member.getBirth()),
                      member.getPhone(),
                       member.getEmail(), 
-                     member.getRole().getcode(),
+                     member.getRole().getCode(),
                     MemberStatus.ACTIVE.getCode() });
             jdbcUtil.executeUpdate();
             jdbcUtil.commit();
@@ -141,7 +134,7 @@ public class MemberDAO {
         JDBCUtil jdbcUtil = new JDBCUtil();
         try {
             jdbcUtil.setSqlAndParameters(query.toString(),
-                    new Object[] { WITHDRAWN.getCode(), memberId, MemberStatus.ACTIVE.getCode() });
+                    new Object[] { MemberStatus.WITHDRAWN.getCode(), memberId, MemberStatus.ACTIVE.getCode() });
             int rows = jdbcUtil.executeUpdate();
             jdbcUtil.commit();
             return rows;
