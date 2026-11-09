@@ -4,6 +4,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.sql.Timestamp;
+import java.util.Date;
+import MemberRole;
+import MemberStatus;
 
 import hospital.model.domain.GeneralMember;
 import hospital.model.domain.Member;
@@ -15,8 +19,8 @@ import util.JDBCUtil;
  */
 public class MemberDAO {
 
-    public static final String STATUS_ACTIVE = "ACTIVE";
-    public static final String STATUS_WITHDRAWN = "WITHDRAWN";
+    public static final String MemberStatus.ACTIVE.getCode() = "ACTIVE";
+    public static final String WITHDRAWN.getCode() = "WITHDRAWN";
 
     private static final String SELECT_MEMBER_COLUMNS =
             "SELECT MEMBER_ID, USER_ID, PASSWORD, NAME, BIRTH, PHONE, EMAIL, ROLE, STATUS, CREATED_AT "
@@ -75,8 +79,8 @@ public class MemberDAO {
                     toTimestamp(member.getBirth()),
                      member.getPhone(),
                       member.getEmail(), 
-                     member.getRole().name,
-                    STATUS_ACTIVE });
+                     member.getRole().getcode(),
+                    MemberStatus.ACTIVE.getCode() });
             jdbcUtil.executeUpdate();
             jdbcUtil.commit();
         } catch (Exception ex) {
@@ -107,10 +111,10 @@ public class MemberDAO {
         Object[] params;
         if (changePassword) {
             params = new Object[] { member.getPassword(), member.getName(), toTimestamp(member.getBirth()),
-                    member.getPhone(), member.getEmail(), member.getMemberId(), STATUS_ACTIVE };
+                    member.getPhone(), member.getEmail(), member.getMemberId(), MemberStatus.ACTIVE.getCode() };
         } else {
             params = new Object[] { member.getName(), toTimestamp(member.getBirth()),
-                    member.getPhone(), member.getEmail(), member.getMemberId(), STATUS_ACTIVE };
+                    member.getPhone(), member.getEmail(), member.getMemberId(), MemberStatus.ACTIVE.getCode() };
         }
 
         JDBCUtil jdbcUtil = new JDBCUtil();
@@ -137,7 +141,7 @@ public class MemberDAO {
         JDBCUtil jdbcUtil = new JDBCUtil();
         try {
             jdbcUtil.setSqlAndParameters(query.toString(),
-                    new Object[] { STATUS_WITHDRAWN, memberId, STATUS_ACTIVE });
+                    new Object[] { WITHDRAWN.getCode(), memberId, MemberStatus.ACTIVE.getCode() });
             int rows = jdbcUtil.executeUpdate();
             jdbcUtil.commit();
             return rows;
@@ -194,8 +198,8 @@ public class MemberDAO {
         member.setBirth(rs.getDate("BIRTH"));
         member.setPhone(rs.getString("PHONE"));
         member.setEmail(rs.getString("EMAIL"));
-        member.setRole(MemberRole.valueOf(rs.getString("ROLE")));
-        member.setStatus(MemberStatus.valueOf(rs.getString("STATUS")));
+        member.setRole(MemberRole.fromCode(rs.getString("ROLE")));
+        member.setStatus(MemberStatus.fromCode(rs.getString("STATUS")));
         member.setCreatedAt(rs.getTimestamp("CREATED_AT"));
         return member;
     }
