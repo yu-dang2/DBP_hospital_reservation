@@ -6,7 +6,7 @@ import hospital.model.dao.DoctorDAO;
 import hospital.model.domain.Doctor;
 
 public class DoctorDAOTest {
-    public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
         DoctorDAO doctorDAO = new DoctorDAO();
 
         // 1. 전체 의사 조회

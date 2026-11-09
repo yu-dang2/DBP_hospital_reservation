@@ -16,7 +16,7 @@ public class DoctorScheduleDAO {
     }
 
     // 의사의 진료 일정 조회 (월요일부터 정렬, 결과가 없으면 빈 리스트 반환)
-    public List<DoctorSchedule> findByDoctorId(Long doctorId) {
+    public List<DoctorSchedule> findByDoctorId(Long doctorId) throws SQLException{
         List<DoctorSchedule> scheduleList = new ArrayList<DoctorSchedule>();
 
         StringBuffer query = new StringBuffer();
@@ -40,14 +40,11 @@ public class DoctorScheduleDAO {
                 schedule.setDayOff(rs.getInt("DAY_OFF") == 1);   // DB의 1/0을 true/false로 변환
 
                 scheduleList.add(schedule);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            } 
+        return scheduleList;
         } finally {
             jdbcUtil.close();
         }
-
-        return scheduleList;
     }
 
     // 진료 시간과 휴무 여부 수정 (수정된 행 수 반환)

@@ -16,7 +16,7 @@ public class DoctorDAO {
     }
 
     // 전체 의사 목록 조회 (결과가 없으면 빈 리스트 반환)
-    public List<Doctor> findAll() {
+    public List<Doctor> findAll() throws SQLException{
         List<Doctor> doctorList = new ArrayList<Doctor>();
 
         StringBuffer query = new StringBuffer();
@@ -28,21 +28,20 @@ public class DoctorDAO {
 
         try {
             ResultSet rs = jdbcUtil.executeQuery();
-
+            if (rs == null) {
+                throw new SQLException("의사 목록 조회 실패");
+            }
             while (rs.next()) {
                 doctorList.add(toDoctor(rs));
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            return doctorList;
         } finally {
             jdbcUtil.close();
         }
-
-        return doctorList;
     }
 
     // 의사 한 명 조회 (결과가 없으면 null 반환)
-    public Doctor findById(Long doctorId) {
+    public Doctor findById(Long doctorId) throws SQLException{
         StringBuffer query = new StringBuffer();
         query.append("SELECT DOCTOR_ID, NAME, SPECIALTY, BIO, DEPT_ID ");
         query.append("FROM DOCTOR ");
@@ -50,21 +49,19 @@ public class DoctorDAO {
 
         jdbcUtil.setSqlAndParameters(query.toString(), new Object[] { doctorId });
 
+        ResultSet rs = jdbcUtil.executeQuery();
         try {
-            ResultSet rs = jdbcUtil.executeQuery();
-
-            if (rs.next()) {
-                return toDoctor(rs);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            jdbcUtil.close();
+        	if (rs == null) {
+        		throw new SQLException("의사 조회 실패: doctorId=" + doctorId);
         }
-
+        if (rs.next()) {
+            return toDoctor(rs);
+        }
         return null;
+    } finally {
+        jdbcUtil.close();
     }
-
+}
     // 조회 결과의 현재 행을 Doctor 객체로 변환
     private Doctor toDoctor(ResultSet rs) throws SQLException {
         Doctor doctor = new Doctor();

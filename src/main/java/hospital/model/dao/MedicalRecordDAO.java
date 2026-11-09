@@ -20,7 +20,7 @@ public class MedicalRecordDAO {
     }
 
     // 해당 예약에 진료기록이 이미 있는지 확인
-    public boolean existsByReservationId(Long reservationId) {
+    public boolean existsByReservationId(Long reservationId) throws SQLException{
         StringBuffer query = new StringBuffer();
         query.append("SELECT COUNT(*) AS CNT ");
         query.append("FROM MEDICAL_RECORD ");
@@ -31,16 +31,14 @@ public class MedicalRecordDAO {
         try {
             ResultSet rs = jdbcUtil.executeQuery();
 
-            if (rs.next()) {
-                return rs.getInt("CNT") > 0;
+            if (rs == null) {
+                throw new SQLException("진료기록 존재 확인 실패: reservationId=" + reservationId);
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            rs.next();
+            return rs.getInt("CNT") > 0;
         } finally {
             jdbcUtil.close();
         }
-
-        return false;
     }
 
     // 진료기록 등록 (등록된 행 수 반환, 기록 일자는 오늘)
@@ -77,7 +75,7 @@ public class MedicalRecordDAO {
     // [마이페이지] 회원 본인의 진료완료 예약에 연결된 진료기록을 최근 순으로 최대 5건 조회
     // 다른 회원의 기록은 MEMBER_ID 조건으로 제외, 결과가 없으면 빈 리스트 반환
     // 진료일은 실제 진료한 날인 예약 일시를 사용 (RECORD_DATE는 기록 작성일이며 NULL 가능)
-    public List<MedicalRecordSummary> findRecentByMemberId(Long memberId) {
+    public List<MedicalRecordSummary> findRecentByMemberId(Long memberId) throws SQLException{
         List<MedicalRecordSummary> recordList = new ArrayList<MedicalRecordSummary>();
 
         StringBuffer query = new StringBuffer();
@@ -103,12 +101,10 @@ public class MedicalRecordDAO {
                         rs.getString("DOCTOR_NAME"),
                         rs.getString("DIAGNOSIS")));
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            return recordList;    
         } finally {
             jdbcUtil.close();
         }
 
-        return recordList;
     }
 }

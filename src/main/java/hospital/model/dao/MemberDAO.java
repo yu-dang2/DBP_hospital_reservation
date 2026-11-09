@@ -20,7 +20,7 @@ public class MemberDAO {
           + "FROM MEMBER ";
 
     // 로그인 아이디로 회원 조회
-    public Member findByUserId(String userId) {
+    public Member findByUserId(String userId) throws SQLException {
         StringBuffer query = new StringBuffer();
         query.append(SELECT_MEMBER_COLUMNS);
         query.append("WHERE USER_ID = ? ");
@@ -28,7 +28,7 @@ public class MemberDAO {
     }
 
     // 회원 번호로 회원 조회
-    public Member findById(Long memberId) {
+    public Member findById(Long memberId) throws SQLException {
         StringBuffer query = new StringBuffer();
         query.append(SELECT_MEMBER_COLUMNS);
         query.append("WHERE MEMBER_ID = ? ");
@@ -36,7 +36,7 @@ public class MemberDAO {
     }
 
     // 아이디 중복 확인 (가입 화면 중복 확인, 가입 직전 재검사)
-    public boolean existsByUserId(String userId) {
+    public boolean existsByUserId(String userId) throws SQLException {
         StringBuffer query = new StringBuffer();
         query.append("SELECT USER_ID ");
         query.append("FROM MEMBER ");
@@ -46,16 +46,18 @@ public class MemberDAO {
         try {
             jdbcUtil.setSqlAndParameters(query.toString(), new Object[] { userId });
             ResultSet rs = jdbcUtil.executeQuery();
+            
+            if (rs == null) {
+                throw new SQLException("existsByUserId 실패: " + userId);
+            }
             return rs.next();
-        } catch (SQLException ex) {
-            throw new DaoException("existsByUserId 실패: " + userId, ex);
-        } finally {
+        }finally {
             jdbcUtil.close();
         }
     }
 
     // 신규 회원 등록. MEMBER_ID는 SEQ_MEMBER.NEXTVAL, member.getPassword()는 Manager가 해시한 값이어야 한다.
-    public long insert(Member member) {
+    public long insert(Member member) throws SQLException {
         long memberId = nextMemberId();
 
         StringBuffer query = new StringBuffer();
@@ -76,9 +78,12 @@ public class MemberDAO {
                     MemberStatus.ACTIVE.getCode() });
             jdbcUtil.executeUpdate();
             jdbcUtil.commit();
+        }  catch (SQLException ex) {
+            jdbcUtil.rollback();
+            throw ex;
         } catch (Exception ex) {
             jdbcUtil.rollback();
-            throw new DaoException("insert 실패: " + member.getUserId(), ex);
+            throw new SQLException(ex);
         } finally {
             jdbcUtil.close();
         }
@@ -89,7 +94,7 @@ public class MemberDAO {
 
     // 회원 정보 수정. password가 null 또는 빈 값이면 기존 비밀번호를 유지한다.
     // member.getMemberId()는 Manager가 세션의 본인 memberId로 설정해야 한다. 반환값은 갱신 행 수.
-    public int update(Member member) {
+    public int update(Member member) throws SQLException {
         boolean changePassword = member.getPassword() != null && !member.getPassword().isEmpty();
 
         StringBuffer query = new StringBuffer();
@@ -116,16 +121,19 @@ public class MemberDAO {
             int rows = jdbcUtil.executeUpdate();
             jdbcUtil.commit();
             return rows;
+        } catch (SQLException ex) {
+            jdbcUtil.rollback();
+            throw ex;
         } catch (Exception ex) {
             jdbcUtil.rollback();
-            throw new DaoException("update 실패: memberId=" + member.getMemberId(), ex);
+            throw new SQLException(ex);
         } finally {
             jdbcUtil.close();
         }
     }
 
     // 탈퇴 처리: 행은 삭제하지 않고 STATUS만 변경한다. 반환값은 갱신 행 수.
-    public int markWithdrawn(Long memberId) {
+    public int markWithdrawn(Long memberId) throws SQLException {
         StringBuffer query = new StringBuffer();
         query.append("UPDATE MEMBER ");
         query.append("SET STATUS = ? ");
@@ -138,9 +146,12 @@ public class MemberDAO {
             int rows = jdbcUtil.executeUpdate();
             jdbcUtil.commit();
             return rows;
+        } catch (SQLException ex) {
+            jdbcUtil.rollback();
+            throw ex;
         } catch (Exception ex) {
             jdbcUtil.rollback();
-            throw new DaoException("markWithdrawn 실패: memberId=" + memberId, ex);
+            throw new SQLException(ex);
         } finally {
             jdbcUtil.close();
         }
@@ -148,7 +159,7 @@ public class MemberDAO {
 
     // ---------- private ----------
 
-    private long nextMemberId() {
+    private long nextMemberId() throws SQLException {
         StringBuffer query = new StringBuffer();
         query.append("SELECT SEQ_MEMBER.NEXTVAL AS MEMBER_ID ");
         query.append("FROM DUAL ");
@@ -157,29 +168,31 @@ public class MemberDAO {
         try {
             jdbcUtil.setSqlAndParameters(query.toString(), null);
             ResultSet rs = jdbcUtil.executeQuery();
+            if (rs == null) {
+                throw new SQLException("SEQ_MEMBER 조회 실패");
+            }
             rs.next();
             return rs.getLong("MEMBER_ID");
-        } catch (SQLException ex) {
-            throw new DaoException("SEQ_MEMBER 조회 실패", ex);
         } finally {
             jdbcUtil.close();
         }
     }
 
-    private Member queryOne(String sql, Object[] params) {
+    private Member queryOne(String sql, Object[] params) throws SQLException {
         JDBCUtil jdbcUtil = new JDBCUtil();
         try {
             jdbcUtil.setSqlAndParameters(sql, params);
             ResultSet rs = jdbcUtil.executeQuery();
+            if (rs == null) {
+                throw new SQLException("회원 조회 실패");
+            }
             if (rs.next()) {
                 return toMember(rs);
             }
-        } catch (SQLException ex) {
-            throw new DaoException("회원 조회 실패", ex);
+            return null;
         } finally {
             jdbcUtil.close();
         }
-        return null;
     }
 
     private Member toMember(ResultSet rs) throws SQLException {

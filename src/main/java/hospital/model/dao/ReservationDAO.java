@@ -23,7 +23,7 @@ public class ReservationDAO {
     }
 
     // 예약 한 건 조회 (결과가 없으면 null 반환)
-    public Reservation findById(Long reservationId) {
+    public Reservation findById(Long reservationId) throws SQLException {
         StringBuffer query = new StringBuffer();
         query.append("SELECT R.RESERVATION_ID, R.RESERVATION_DATE, R.STATUS, R.CREATED_AT, R.CANCELED_AT, ");
         query.append("       M.MEMBER_ID, M.NAME AS MEMBER_NAME, ");
@@ -53,13 +53,11 @@ public class ReservationDAO {
 
                 return reservation;
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            return null;     
         } finally {
             jdbcUtil.close();
         }
 
-        return null;
     }
 
     // 예약 상태 변경 (RESERVED 상태인 예약만 변경, 변경된 행 수 반환)
@@ -89,7 +87,7 @@ public class ReservationDAO {
 
     // 관리자 예약 목록 조회 (null이 아닌 조건만 적용, 결과가 없으면 빈 리스트 반환)
     // 목록용 조회라 createdAt, canceledAt, doctorSchedule은 채우지 않음
-    public List<Reservation> search(Date date, Long doctorId, ReservationStatus status) {
+    public List<Reservation> search(Date date, Long doctorId, ReservationStatus status) throws SQLException{
         List<Reservation> reservationList = new ArrayList<Reservation>();
         List<Object> params = new ArrayList<Object>();
 
@@ -121,22 +119,24 @@ public class ReservationDAO {
 
         try {
             ResultSet rs = jdbcUtil.executeQuery();
+            if (rs == null) {
+                throw new SQLException("예약 목록 조회 실패");
+            }
 
             while (rs.next()) {
                 reservationList.add(toReservation(rs));
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            return reservationList;
+     
         } finally {
             jdbcUtil.close();
         }
 
-        return reservationList;
     }
 
     // TODO: 예약이 있는 날짜의 휴진 등록 정책이 정해지면 사용 여부 확정 (FR-34)
     // 해당 날짜에 처리되지 않은 예약이 있는지 확인
-    public boolean existsReservedByDoctorIdAndDate(Long doctorId, Date date) {
+    public boolean existsReservedByDoctorIdAndDate(Long doctorId, Date date) throws SQLException{
         StringBuffer query = new StringBuffer();
         query.append("SELECT COUNT(*) AS CNT ");
         query.append("FROM RESERVATION ");
@@ -146,21 +146,18 @@ public class ReservationDAO {
 
         jdbcUtil.setSqlAndParameters(query.toString(),
                 new Object[] { doctorId, toDayStart(date, 0), toDayStart(date, 1) });
-
-        try {
-            ResultSet rs = jdbcUtil.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt("CNT") > 0;
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            jdbcUtil.close();
-        }
-
-        return false;
-    }
+        try{        	
+        	ResultSet rs = jdbcUtil.executeQuery();
+        	if (rs == null) {                         
+        		throw new SQLException("휴진일 예약 확인 실패: doctorId=" + doctorId);
+        	}
+        	rs.next();
+        	return rs.getInt("CNT") > 0;
+        
+        	}finally {                                            
+        		jdbcUtil.close();
+        	}
+    	}
 
     // findById와 search가 함께 조회하는 컬럼을 Reservation 객체로 변환
     private Reservation toReservation(ResultSet rs) throws SQLException {

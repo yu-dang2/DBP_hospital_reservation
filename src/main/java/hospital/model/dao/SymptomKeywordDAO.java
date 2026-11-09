@@ -17,7 +17,7 @@ public class SymptomKeywordDAO {
 
     // 증상 키워드 전체를 진료과 ID, 가중치와 함께 조회 (결과가 없으면 빈 리스트 반환)
     // 증상 문장과 비교 & 진료과별 점수 합산은 DoctorManager.recommendDepartments()에서 처리
-    public List<SymptomKeyword> findAll() {
+    public List<SymptomKeyword> findAll() throws SQLException{
         List<SymptomKeyword> keywordList = new ArrayList<SymptomKeyword>();
 
         StringBuffer query = new StringBuffer();
@@ -33,13 +33,10 @@ public class SymptomKeywordDAO {
             while (rs.next()) {
                 keywordList.add(toSymptomKeyword(rs));
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+         return keywordList;
         } finally {
             jdbcUtil.close();
         }
-
-        return keywordList;
     }
 
     // 조회한 증상 키워드 데이터를 SymptomKeyword 객체로 변환

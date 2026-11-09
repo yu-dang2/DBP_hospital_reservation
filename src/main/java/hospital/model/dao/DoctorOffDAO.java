@@ -20,7 +20,7 @@ public class DoctorOffDAO {
     }
 
     // 의사의 휴진 목록 조회 (날짜순, 결과가 없으면 빈 리스트 반환)
-    public List<DoctorOff> findByDoctorId(Long doctorId) {
+    public List<DoctorOff> findByDoctorId(Long doctorId) throws SQLException{
         List<DoctorOff> offList = new ArrayList<DoctorOff>();
 
         StringBuffer query = new StringBuffer();
@@ -37,17 +37,15 @@ public class DoctorOffDAO {
             while (rs.next()) {
                 offList.add(toDoctorOff(rs));
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+           return offList;
         } finally {
             jdbcUtil.close();
         }
 
-        return offList;
     }
 
     // 같은 의사의 같은 날짜에 휴진이 있는지 확인
-    public boolean existsByDoctorIdAndDate(Long doctorId, Date offDate) {
+    public boolean existsByDoctorIdAndDate(Long doctorId, Date offDate) throws SQLException{
         StringBuffer query = new StringBuffer();
         query.append("SELECT COUNT(*) AS CNT ");
         query.append("FROM DOCTOR_OFF ");
@@ -60,10 +58,9 @@ public class DoctorOffDAO {
             ResultSet rs = jdbcUtil.executeQuery();
 
             if (rs.next()) {
-                return rs.getInt("CNT") > 0;
+            	throw new SQLException("의사 확인 실패: doctorId=" + doctorId);
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            rs.next();
         } finally {
             jdbcUtil.close();
         }
@@ -89,7 +86,7 @@ public class DoctorOffDAO {
     }
 
     // 휴진 한 건 조회 (결과가 없으면 null 반환)
-    public DoctorOff findById(Long offId) {
+    public DoctorOff findById(Long offId) throws SQLException {
         StringBuffer query = new StringBuffer();
         query.append("SELECT OFF_ID, DOCTOR_ID, OFF_DATE, REASON, SOURCE ");
         query.append("FROM DOCTOR_OFF ");
@@ -103,13 +100,11 @@ public class DoctorOffDAO {
             if (rs.next()) {
                 return toDoctorOff(rs);
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            return null;
+        
         } finally {
             jdbcUtil.close();
         }
-
-        return null;
     }
 
     // 휴진 삭제 (삭제된 행 수 반환)
