@@ -29,7 +29,7 @@ public class DepartmentDAO {
         try {
             ResultSet rs = jdbcUtil.executeQuery();
             if (rs == null) {
-                throw new SQLException("부서 조회 실패");
+                throw new SQLException("진료과 조회 실패");
             }
             while (rs.next()) {
                departmentList.add(toDepartment(rs));
