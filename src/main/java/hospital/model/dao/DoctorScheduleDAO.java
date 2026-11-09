@@ -29,6 +29,9 @@ public class DoctorScheduleDAO {
 
         try {
             ResultSet rs = jdbcUtil.executeQuery();
+            if (rs == null) {
+                throw new SQLException("진료 일정 조회 실패: doctorId=" + doctorId);
+            }
 
             while (rs.next()) {
                 DoctorSchedule schedule = new DoctorSchedule();

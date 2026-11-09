@@ -33,6 +33,10 @@ public class DoctorOffDAO {
 
         try {
             ResultSet rs = jdbcUtil.executeQuery();
+            
+            if (rs == null) {
+                throw new SQLException("휴진 목록 조회 실패: doctorId=" + doctorId);
+            }
 
             while (rs.next()) {
                 offList.add(toDoctorOff(rs));
@@ -57,15 +61,14 @@ public class DoctorOffDAO {
         try {
             ResultSet rs = jdbcUtil.executeQuery();
 
-            if (rs.next()) {
-            	throw new SQLException("의사 확인 실패: doctorId=" + doctorId);
+            if (rs == null) {
+                throw new SQLException("휴진 중복 확인 실패: doctorId=" + doctorId);
             }
             rs.next();
+            return rs.getInt("CNT") > 0;
         } finally {
             jdbcUtil.close();
         }
-
-        return false;
     }
 
     // 휴진 등록 (등록된 행 수 반환)
@@ -96,6 +99,9 @@ public class DoctorOffDAO {
 
         try {
             ResultSet rs = jdbcUtil.executeQuery();
+            if (rs == null) {
+                throw new SQLException("휴진 조회 실패: offId=" + offId);
+            }
 
             if (rs.next()) {
                 return toDoctorOff(rs);

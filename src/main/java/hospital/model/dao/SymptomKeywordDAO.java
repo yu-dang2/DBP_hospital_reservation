@@ -29,6 +29,9 @@ public class SymptomKeywordDAO {
 
         try {
             ResultSet rs = jdbcUtil.executeQuery();
+            if (rs == null) {
+                throw new SQLException("증상 키워드 목록 조회 실패");
+            }
 
             while (rs.next()) {
                 keywordList.add(toSymptomKeyword(rs));

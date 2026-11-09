@@ -92,7 +92,9 @@ public class MedicalRecordDAO {
             memberId, ReservationStatus.COMPLETED.getCode(), RECENT_LIMIT });
 
         try {
-            ResultSet rs = jdbcUtil.executeQuery();
+            ResultSet rs = jdbcUtil.executeQuery();if (rs == null) {
+                throw new SQLException("최근 진료기록 조회 실패: memberId=" + memberId);
+            }
 
             while (rs.next()) {
                 recordList.add(new MedicalRecordSummary(

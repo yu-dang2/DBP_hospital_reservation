@@ -39,6 +39,10 @@ public class ReservationDAO {
 
         try {
             ResultSet rs = jdbcUtil.executeQuery();
+            
+            if(rs == null) {
+            	throw new SQLException ("예약 조회 실패: reservationId=" + reservationId);
+            }
 
             if (rs.next()) {
                 Reservation reservation = toReservation(rs);
