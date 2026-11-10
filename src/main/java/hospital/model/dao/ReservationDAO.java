@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 
 import hospital.model.domain.Doctor;
-import hospital.model.domain.DoctorSchedule;
 import hospital.model.domain.Member;
 import hospital.model.domain.Reservation;
 import hospital.model.domain.ReservationStatus;
@@ -27,12 +26,10 @@ public class ReservationDAO {
         StringBuffer query = new StringBuffer();
         query.append("SELECT R.RESERVATION_ID, R.RESERVATION_DATE, R.STATUS, R.CREATED_AT, R.CANCELED_AT, ");
         query.append("       M.MEMBER_ID, M.NAME AS MEMBER_NAME, ");
-        query.append("       D.DOCTOR_ID, D.NAME AS DOCTOR_NAME, ");
-        query.append("       S.SCHEDULE_ID, S.START_TIME, S.END_TIME ");
+        query.append("       D.DOCTOR_ID, D.NAME AS DOCTOR_NAME ");
         query.append("FROM RESERVATION R ");
         query.append("JOIN MEMBER M          ON R.MEMBER_ID = M.MEMBER_ID ");
         query.append("JOIN DOCTOR D          ON R.DOCTOR_ID = D.DOCTOR_ID ");
-        query.append("JOIN DOCTOR_SCHEDULE S ON R.SCHEDULE_ID = S.SCHEDULE_ID ");
         query.append("WHERE R.RESERVATION_ID = ? ");
 
         jdbcUtil.setSqlAndParameters(query.toString(), new Object[] { reservationId });
@@ -48,13 +45,6 @@ public class ReservationDAO {
                 Reservation reservation = toReservation(rs);
                 reservation.setCreatedAt(toDate(rs.getTimestamp("CREATED_AT")));
                 reservation.setCanceledAt(toDate(rs.getTimestamp("CANCELED_AT")));
-
-                DoctorSchedule schedule = new DoctorSchedule();
-                schedule.setScheduleId(rs.getLong("SCHEDULE_ID"));
-                schedule.setStartTime(rs.getString("START_TIME"));
-                schedule.setEndTime(rs.getString("END_TIME"));
-                reservation.setDoctorSchedule(schedule);
-
                 return reservation;
             }
             return null;     
@@ -90,7 +80,7 @@ public class ReservationDAO {
     }
 
     // 관리자 예약 목록 조회 (null이 아닌 조건만 적용, 결과가 없으면 빈 리스트 반환)
-    // 목록용 조회라 createdAt, canceledAt, doctorSchedule은 채우지 않음
+    // 목록용 조회라 createdAt, canceledAt은 채우지 않음
     public List<Reservation> search(Date date, Long doctorId, ReservationStatus status) throws SQLException{
         List<Reservation> reservationList = new ArrayList<Reservation>();
         List<Object> params = new ArrayList<Object>();

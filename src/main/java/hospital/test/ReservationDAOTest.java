@@ -35,7 +35,6 @@ public class ReservationDAOTest {
         System.out.println("4. 예약 정보: " + found.getMember().getName()
                 + " / " + found.getDoctor().getName()
                 + " / " + timeFormat.format(found.getReservationDate())
-                + " / " + found.getDoctorSchedule().getStartTime()
                 + " / " + found.getStatus());
         System.out.println("5. 없는 예약 조회: " + reservationDAO.findById(-1L));
 

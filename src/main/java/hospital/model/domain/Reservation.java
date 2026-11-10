@@ -1,3 +1,4 @@
+
 package hospital.model.domain;
 
 import java.util.Date;
@@ -11,7 +12,6 @@ public class Reservation {
     private Long reservationId;
     private Member member;
     private Doctor doctor;
-    private DoctorSchedule doctorSchedule;
     private Date reservationDate;
     private ReservationStatus status;
     private Date createdAt;
@@ -24,12 +24,12 @@ public class Reservation {
     }
 
     // 주요 메서드2: 예약 일정 변경
-    public void changeSchedule(DoctorSchedule doctorSchedule, Date reservationDate) {
-        this.doctorSchedule = doctorSchedule;
+    public void changeSchedule(Date reservationDate) {
         this.reservationDate = reservationDate;
     }
 
-    // 주요 메서드3: 예약 취소 가능 여부 확인
+    // 주요 메서드3: 예약 취소 가능 여부 확인(임시)
+    // 취소 변경 24시간 제한은 추가해야함
     public boolean isCancelable() {
         return this.status == ReservationStatus.RESERVED;
     }
