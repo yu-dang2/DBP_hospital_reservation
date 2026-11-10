@@ -1,0 +1,6 @@
+# DB 접속 정보
+dbinfo.properties
+
+# 빌드 결과물
+build/
+bin/
