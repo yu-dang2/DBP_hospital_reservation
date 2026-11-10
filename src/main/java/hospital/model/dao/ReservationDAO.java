@@ -10,6 +10,7 @@ import java.util.List;
 
 import hospital.model.domain.Doctor;
 import hospital.model.domain.Member;
+import hospital.model.domain.GeneralMember;
 import hospital.model.domain.Reservation;
 import hospital.model.domain.ReservationStatus;
 import util.JDBCUtil;
@@ -155,7 +156,9 @@ public class ReservationDAO {
 
     // existsActiveReservation(): 특정 의사의 특정 시간에 예약이 존재하는지 확인 -> 중복 확인
     public boolean existsActiveReservation(Long doctorId, Date reservationDate) throws SQLException {
+
         StringBuffer query = new StringBuffer();
+
         query.append("SELECT COUNT(*) AS CNT ");
         query.append("FROM RESERVATION ");
         query.append("WHERE DOCTOR_ID = ? ");
@@ -174,6 +177,12 @@ public class ReservationDAO {
 
             rs.next();
             return rs.getInt("CNT") > 0;
+
+        } catch (SQLException ex) {
+            throw ex;
+
+        } catch (Exception ex) {
+            throw new SQLException(ex);
 
         } finally {
             jdbcUtil.close();
@@ -421,7 +430,7 @@ public class ReservationDAO {
         }
     }
     
-    // existsUpcomingByMemeberId(): 회원에게 예정된 예약이 있는지 확인함
+    // existsUpcomingByMemberId(): 회원에게 예정된 예약이 있는지 확인함
     public boolean existsUpcomingByMemberId(Long memberId) throws SQLException {
         StringBuffer query = new StringBuffer();
         query.append("SELECT COUNT(*) AS CNT ");
@@ -450,13 +459,10 @@ public class ReservationDAO {
     
     // findById와 search가 함께 조회하는 컬럼을 Reservation 객체로 변환
     private Reservation toReservation(ResultSet rs) throws SQLException {
-        // TODO: 일반 회원 클래스가 정해지면 교체 (Member가 추상 클래스라 임시로 익명 클래스 사용)
-        Member member = new Member() {
-            @Override
-            public boolean isAdmin() {
-                return false;
-            }
-        };
+    	GeneralMember member = new GeneralMember();
+
+    	member.setMemberId(rs.getLong("MEMBER_ID"));
+    	member.setName(rs.getString("MEMBER_NAME"));
         member.setMemberId(rs.getLong("MEMBER_ID"));
         member.setName(rs.getString("MEMBER_NAME"));
 
