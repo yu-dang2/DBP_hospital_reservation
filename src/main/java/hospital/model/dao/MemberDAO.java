@@ -10,9 +10,9 @@ import hospital.model.domain.GeneralMember;
 import hospital.model.domain.Member;
 import util.JDBCUtil;
 
-/**
- * MEMBER 테이블 접근 클래스 (담당: 김민진)
- * 업무 규칙(비밀번호 해싱, 본인 확인, 중복 결과 해석)은 MemberManager가 담당한다.
+/*
+ - MEMBER 테이블 접근 클래스 (담당: 김민진)
+ - 업무 규칙(비밀번호 해싱, 본인 확인, 중복 결과 해석)은 MemberManager가 담당
  */
 public class MemberDAO {
     private static final String SELECT_MEMBER_COLUMNS =
@@ -51,12 +51,16 @@ public class MemberDAO {
                 throw new SQLException("existsByUserId 실패: " + userId);
             }
             return rs.next();
-        }finally {
+        } catch (SQLException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new SQLException(ex);
+        } finally {
             jdbcUtil.close();
         }
     }
 
-    // 신규 회원 등록. MEMBER_ID는 SEQ_MEMBER.NEXTVAL, member.getPassword()는 Manager가 해시한 값이어야 한다.
+    // 신규 회원 등록
     public long insert(Member member) throws SQLException {
         long memberId = nextMemberId();
 
@@ -92,8 +96,7 @@ public class MemberDAO {
         return memberId;
     }
 
-    // 회원 정보 수정. password가 null 또는 빈 값이면 기존 비밀번호를 유지한다.
-    // member.getMemberId()는 Manager가 세션의 본인 memberId로 설정해야 한다. 반환값은 갱신 행 수.
+    // 회원 정보 수정: password가 null 또는 빈 값이면 기존 비밀번호를 유지
     public int update(Member member) throws SQLException {
         boolean changePassword = member.getPassword() != null && !member.getPassword().isEmpty();
 
@@ -132,7 +135,7 @@ public class MemberDAO {
         }
     }
 
-    // 탈퇴 처리: 행은 삭제하지 않고 STATUS만 변경한다. 반환값은 갱신 행 수.
+    // 탈퇴 처리: 행은 삭제하지 않고 STATUS만 변경. 반환값은 갱신 행의 수
     public int markWithdrawn(Long memberId) throws SQLException {
         StringBuffer query = new StringBuffer();
         query.append("UPDATE MEMBER ");
@@ -173,7 +176,11 @@ public class MemberDAO {
             }
             rs.next();
             return rs.getLong("MEMBER_ID");
-        } finally {
+        } catch (SQLException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new SQLException(ex);
+        }finally {
             jdbcUtil.close();
         }
     }
@@ -190,6 +197,10 @@ public class MemberDAO {
                 return toMember(rs);
             }
             return null;
+        } catch (SQLException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new SQLException(ex);
         } finally {
             jdbcUtil.close();
         }
