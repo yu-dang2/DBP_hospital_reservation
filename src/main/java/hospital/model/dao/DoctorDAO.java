@@ -49,9 +49,8 @@ public class DoctorDAO {
         
         jdbcUtil.setSqlAndParameters(query.toString(), new Object[] { doctorId });
         
-        ResultSet rs = jdbcUtil.executeQuery();
-        
         try {
+            ResultSet rs = jdbcUtil.executeQuery(); 
             if(rs == null) {
                 throw new SQLException ("의사 조회 실패: " + doctorId);
             }
