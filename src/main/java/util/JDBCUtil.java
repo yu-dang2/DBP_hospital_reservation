@@ -11,7 +11,7 @@ public class JDBCUtil {
 	private String sql = null; // 실행할 query
 	private Object[] parameters = null;; // PreparedStatement 의 매개변수 값을 저장하는 배열
 	private static DataSource ds = null; // DBCP DataSource
-	private static Connection conn = null;
+	private Connection conn = null;
 	private PreparedStatement pstmt = null;
 	private CallableStatement cstmt = null;
 	private ResultSet rs = null;
@@ -91,9 +91,9 @@ public class JDBCUtil {
 	}
 
 	// 매개변수 배열에서 특정위치의 매개변수를 반환하는 메소드
-	private Object getParameter(int index) throws Exception {
+	private Object getParameter(int index) throws SQLException {
 		if (index >= getParameterSize())
-			throw new Exception("INDEX 값이 파라미터의 갯수보다 많습니다.");
+			throw new SQLException("INDEX 값이 파라미터의 갯수보다 많습니다.");
 		return parameters[index];
 	}
 
@@ -115,18 +115,13 @@ public class JDBCUtil {
 	}
 
 	// JDBCUtil 의 쿼리와 매개변수를 이용해 executeQuery 를 수행하는 메소드
-	public ResultSet executeQuery() {
-		try {
-			pstmt = getPreparedStatement();
-			for (int i = 0; i < getParameterSize(); i++) {
-				pstmt.setObject(i + 1, getParameter(i));
-			}
-			rs = pstmt.executeQuery();
-			return rs;
-		} catch (Exception ex) {
-			ex.printStackTrace();
+	public ResultSet executeQuery() throws SQLException{
+		pstmt = getPreparedStatement();
+		for (int i = 0; i < getParameterSize(); i++) {
+			pstmt.setObject(i + 1, getParameter(i));
 		}
-		return null;
+		rs = pstmt.executeQuery();
+		return rs;
 	}
 
 	// JDBCUtil 의 쿼리와 매개변수를 이용해 executeUpdate 를 수행하는 메소드
