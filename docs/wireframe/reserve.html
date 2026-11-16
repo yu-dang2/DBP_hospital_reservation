@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>진료 예약 | 딱맞닥</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- JSP 전환 시: /WEB-INF/views/common/header.jsp 로 분리 (로그인 여부는 세션으로 분기) -->
+<header class="site-header">
+  <div class="container-xl inner d-flex align-items-center justify-content-between gap-4">
+    <a href="index.html" class="brand"><span class="brand-mark">+</span>딱맞닥</a>
+    <nav class="main-nav d-flex gap-4" aria-label="주 메뉴"><a href="doctor-list.html">진료과·의사 찾기</a><a href="symptom-result.html">증상으로 찾기</a><a href="reservation-list.html">내 예약</a></nav>
+    <div class="d-flex align-items-center gap-3"><a href="mypage.html" class="fw-semibold text-decoration-none" style="color:var(--text)">김○○님 · 마이페이지</a><a href="login.html" class="btn btn-line btn-sm">로그아웃</a></div>
+  </div>
+</header>
+<main class="page">
+  <div class="container-xl">
+
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3"><h1>진료 예약</h1><span class="fr">FR-16</span><span class="small-note ms-2">로그인한 회원만 이용할 수 있어요 <span class="fr">FR-04</span></span></div>
+    <div class="card-w py-3 px-4 mb-4"><div class="stepper"><div class="step done"><span class="dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><span class="txt">진료과</span></div><div class="bar done"></div><div class="step done"><span class="dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><span class="txt">의사</span></div><div class="bar done"></div><div class="step cur"><span class="dot">3</span><span class="txt">날짜</span></div><div class="bar"></div><div class="step cur"><span class="dot">4</span><span class="txt">시간</span></div><div class="bar"></div><div class="step todo"><span class="dot">5</span><span class="txt">확인</span></div></div></div>
+    <!-- 실제 구현: 날짜 선택 시 AJAX로 /reservation/slots?doctorId=&date= 호출 -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-3">
+        <div class="card-w h-100 d-flex flex-column gap-3">
+          <div><div class="small-note">진료과</div><div class="d-flex justify-content-between"><strong>신경과</strong><a href="doctor-list.html" class="small">변경</a></div></div>
+          <div><div class="small-note">의사</div><div class="d-flex justify-content-between"><strong>김○○ 교수</strong><a href="doctor-list.html" class="small">변경</a></div></div>
+          <hr class="my-0">
+          <p class="small-note">화·목요일은 오후(13:30–17:30), 나머지 요일은 오전에 진료해요. 예약은 30분 단위예요.</p>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <section class="card-w h-100" aria-label="날짜 선택">
+          <div class="d-flex justify-content-between align-items-center mb-3"><button type="button" class="btn btn-line btn-sm" style="width:36px;padding:0" aria-label="이전 달">‹</button><strong style="font-size:17px">2026년 9월</strong><button type="button" class="btn btn-line btn-sm" style="width:36px;padding:0" aria-label="다음 달">›</button></div>
+          <div class="cal-grid mb-3"><div class="cal-head">일</div><div class="cal-head">월</div><div class="cal-head">화</div><div class="cal-head">수</div><div class="cal-head">목</div><div class="cal-head">금</div><div class="cal-head">토</div><div></div><div></div><button type="button" class="cal-day past" disabled>1</button><button type="button" class="cal-day past" disabled>2</button><button type="button" class="cal-day past" disabled>3</button><button type="button" class="cal-day past" disabled>4</button><button type="button" class="cal-day past" disabled>5</button><button type="button" class="cal-day past" disabled>6</button><button type="button" class="cal-day past" disabled>7</button><button type="button" class="cal-day past" disabled>8</button><button type="button" class="cal-day past" disabled>9</button><button type="button" class="cal-day past" disabled>10</button><button type="button" class="cal-day past" disabled>11</button><button type="button" class="cal-day past" disabled>12</button><button type="button" class="cal-day past" disabled>13</button><button type="button" class="cal-day past" disabled>14</button><button type="button" class="cal-day past" disabled>15</button><button type="button" class="cal-day past" disabled>16</button><button type="button" class="cal-day past" disabled>17</button><button type="button" class="cal-day past" disabled>18</button><button type="button" class="cal-day past" disabled>19</button><button type="button" class="cal-day closed" disabled>20</button><button type="button" class="cal-day" data-day="21" aria-pressed="false">21</button><button type="button" class="cal-day active" data-day="22" aria-pressed="true">22</button><button type="button" class="cal-day" data-day="23" aria-pressed="false">23</button><button type="button" class="cal-day holiday" disabled>24<small>공휴일</small></button><button type="button" class="cal-day holiday" disabled>25<small>공휴일</small></button><button type="button" class="cal-day holiday" disabled>26<small>공휴일</small></button><button type="button" class="cal-day closed" disabled>27</button><button type="button" class="cal-day" data-day="28" aria-pressed="false">28</button><button type="button" class="cal-day off" disabled>29<small>휴진</small></button><button type="button" class="cal-day" data-day="30" aria-pressed="false">30</button><div></div><div></div><div></div></div>
+          <div class="legend"><span><i style="background:var(--ac);border-color:var(--ac)"></i>선택</span><span><i></i>예약 가능</span><span><i style="background:var(--neutral);border-color:var(--neutral)"></i>휴진</span><span><i style="background:var(--danger-light);border-color:var(--danger-light)"></i>공휴일</span><span class="fr">FR-20</span></div>
+        </section>
+      </div>
+      <div class="col-lg-4">
+        <section class="card-w h-100" aria-labelledby="slotTitle">
+          <h2 id="slotTitle" style="font-size:17px" class="mb-2">9월 22일(화) 예약 가능 시간</h2>
+          <div class="d-flex gap-1 mb-3"><span class="fr">FR-17</span><span class="fr">FR-18</span></div>
+          <div class="slot-grid mb-3"><button type="button" class="slot" aria-pressed="false">13:30</button><button type="button" class="slot" disabled aria-label="14:00 마감">14:00</button><button type="button" class="slot active" aria-pressed="true">14:30</button><button type="button" class="slot" aria-pressed="false">15:00</button><button type="button" class="slot" disabled aria-label="15:30 마감">15:30</button><button type="button" class="slot" aria-pressed="false">16:00</button><button type="button" class="slot" aria-pressed="false">16:30</button><button type="button" class="slot" aria-pressed="false">17:00</button></div>
+          <p class="small-note">취소선이 있는 시간은 이미 예약이 찬 시간이에요.</p>
+        </section>
+      </div>
+    </div>
+    <form class="card-w d-flex flex-wrap justify-content-between align-items-center gap-3 py-3 px-4" action="complete.html" method="get">
+      <div><div class="small-note">선택한 일정</div><strong id="selSummary" style="font-size:17px" aria-live="polite">2026년 9월 22일(화) 14:30 · 신경과 김○○ 교수</strong></div>
+      <button type="submit" class="btn btn-primary btn-lg px-5">예약하기</button>
+    </form>
+
+    <!-- 예약하기를 눌렀을 때 같은 회원의 같은 시간 예약이 이미 있으면 표시 (서버 검사 결과) -->
+    <section class="mt-5" aria-labelledby="dupTitle">
+      <div class="d-flex align-items-center gap-2 mb-2"><h2 id="dupTitle" class="text-muted-w" style="font-size:16px">[상태] 같은 시간에 이미 내 예약이 있을 때</h2><span class="fr">FR-19</span></div>
+      <div class="card-w dashed">
+        <div class="notice danger mb-3"><strong>이 시간에는 예약할 수 없어요.</strong> 9월 21일(월) 10:00에 이미 내과 이○○ 교수 예약이 있어요. 다른 시간을 골라 주세요.</div>
+        <div class="d-flex flex-wrap gap-2"><a href="reserve.html" class="btn btn-line">다른 시간 고르기</a><a href="reservation-list.html" class="btn btn-outline-primary">기존 예약 보기</a></div>
+      </div>
+    </section>
+  </div>
+</main>
+<button type="button" id="frToggle" class="btn btn-line btn-sm fr-toggle">요구사항 번호 숨기기</button>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

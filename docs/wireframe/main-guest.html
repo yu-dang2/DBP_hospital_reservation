@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>홈(비로그인) | 딱맞닥</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- JSP 전환 시: /WEB-INF/views/common/header.jsp 로 분리 (로그인 여부는 세션으로 분기) -->
+<header class="site-header">
+  <div class="container-xl inner d-flex align-items-center justify-content-between gap-4">
+    <a href="index.html" class="brand"><span class="brand-mark">+</span>딱맞닥</a>
+    <nav class="main-nav d-flex gap-4" aria-label="주 메뉴"><a href="doctor-list.html">진료과·의사 찾기</a><a href="symptom-result.html">증상으로 찾기</a><a href="login.html?redirect=reservation-list.html">내 예약</a></nav>
+    <div class="d-flex align-items-center gap-2"><a href="login.html" class="btn btn-line btn-sm">로그인</a><a href="signup.html" class="btn btn-primary btn-sm">회원가입</a></div>
+  </div>
+</header>
+<main class="page">
+  <div class="container-xl">
+
+    <div class="row g-4 mb-5">
+      <div class="col-lg-8">
+        <section class="hero h-100 d-flex flex-column justify-content-center" aria-labelledby="symTitle">
+          <div class="d-flex align-items-center gap-2 mb-2"><h1 id="symTitle">어디가 불편하세요?</h1><span class="fr">FR-13</span></div>
+          <p class="mb-4">증상을 문장으로 적어 주시면 맞는 진료과를 찾아 드릴게요.</p>
+          <form action="symptom-result.html" method="get" class="d-flex gap-2 mb-3">
+            <label for="sym" class="visually-hidden">증상 입력</label>
+            <input id="sym" name="symptomText" class="form-control" maxlength="200" placeholder="예: 머리가 아프고 어지러워요">
+            <button type="submit" class="btn btn-light text-nowrap">진료과 찾기</button>
+          </form>
+          <div class="quick-chips" aria-label="자주 찾는 증상">
+            <a href="symptom-result.html?symptomText=두통 어지러움">두통·어지러움</a>
+            <a href="symptom-result.html?symptomText=기침 발열">기침·발열</a>
+            <a href="symptom-result.html?symptomText=복통 설사">복통·설사</a>
+            <a href="symptom-result.html?symptomText=피부 발진">피부 발진</a>
+            <a href="symptom-result.html?symptomText=눈 충혈">눈 충혈</a>
+            <a href="symptom-result.html?symptomText=허리 통증">허리 통증</a>
+          </div>
+        </section>
+      </div>
+      <div class="col-lg-4 d-flex flex-column gap-4">
+        <section class="card-w">
+          <div class="d-flex align-items-center gap-2 mb-3"><h2 style="font-size:17px">내 예약</h2><span class="fr">FR-04</span></div>
+          <div class="upcoming" style="background:var(--neutral)"><strong class="d-block mb-1">로그인하고 예약을 확인해 보세요</strong><span class="small-note">진료 예약과 예약 내역은 로그인한 회원만 이용할 수 있어요.</span></div>
+          <div class="d-flex gap-2 mt-3"><a href="login.html?redirect=main.html" class="btn btn-primary flex-fill">로그인</a><a href="signup.html" class="btn btn-line flex-fill">회원가입</a></div>
+        </section>
+        <section class="card-w flex-grow-1">
+          <form action="doctor-list.html" method="get">
+            <div class="d-flex align-items-center gap-2 mb-2"><label for="q" class="form-label mb-0" style="font-size:17px;font-weight:700">진료과·의사 검색</label><span class="fr">FR-09</span></div>
+            <p class="small-note mb-3">진료과 이름이나 의사 이름으로 찾아보세요.</p>
+            <div class="d-flex gap-2"><input id="q" name="keyword" type="search" class="form-control" placeholder="예: 신경과, 김○○"><button type="submit" class="btn btn-primary" style="width:48px;padding:0" aria-label="검색"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button></div>
+          </form>
+        </section>
+      </div>
+    </div>
+
+    <!-- 진료과 아이콘은 임시(이모지). 실제 구현 시 일러스트 아이콘으로 교체 -->
+    <section class="mb-5" aria-labelledby="deptTitle">
+      <div class="section-title"><div class="d-flex align-items-center gap-2"><h2 id="deptTitle">진료과별로 찾기</h2><span class="fr">FR-07</span></div><a href="doctor-list.html">전체 보기 ›</a></div>
+      <div class="dept-grid">
+        <a href="doctor-list.html" class="dept-tile"><span class="dept-icon" aria-hidden="true">🩺</span><strong>내과</strong><span>의사 4명</span></a>
+        <a href="doctor-list.html" class="dept-tile"><span class="dept-icon" aria-hidden="true">🧠</span><strong>신경과</strong><span>의사 3명</span></a>
+        <a href="doctor-list.html" class="dept-tile"><span class="dept-icon" aria-hidden="true">👂</span><strong>이비인후과</strong><span>의사 3명</span></a>
+        <a href="doctor-list.html" class="dept-tile"><span class="dept-icon" aria-hidden="true">🦴</span><strong>정형외과</strong><span>의사 4명</span></a>
+        <a href="doctor-list.html" class="dept-tile"><span class="dept-icon" aria-hidden="true">🧴</span><strong>피부과</strong><span>의사 2명</span></a>
+        <a href="doctor-list.html" class="dept-tile"><span class="dept-icon" aria-hidden="true">👁️</span><strong>안과</strong><span>의사 2명</span></a>
+        <a href="doctor-list.html" class="dept-tile"><span class="dept-icon" aria-hidden="true">🏠</span><strong>가정의학과</strong><span>의사 2명</span></a>
+        <a href="doctor-list.html" class="dept-tile"><span class="dept-icon" aria-hidden="true">🧸</span><strong>소아청소년과</strong><span>의사 3명</span></a>
+      </div>
+    </section>
+
+    <section class="howto" aria-labelledby="howTitle">
+      <div class="section-title"><h2 id="howTitle">딱맞닥, 이렇게 이용해요</h2></div>
+      <div class="row g-3">
+        <div class="col-md-4"><div class="card-w step-card"><span class="num">1</span><div><strong>증상 적기</strong><span class="small-note">어디가 아픈지 문장으로 적으면 맞는 진료과를 추천해요.</span></div></div></div>
+        <div class="col-md-4"><div class="card-w step-card"><span class="num">2</span><div><strong>의사·시간 고르기</strong><span class="small-note">진료 시간표에서 지금 예약할 수 있는 시간만 보여 드려요.</span></div></div></div>
+        <div class="col-md-4"><div class="card-w step-card"><span class="num">3</span><div><strong>예약 확인하기</strong><span class="small-note">마이페이지에서 예약을 확인하고, 진료 24시간 전까지 바꾸거나 취소할 수 있어요.</span></div></div></div>
+      </div>
+    </section>
+  </div>
+</main>
+<button type="button" id="frToggle" class="btn btn-line btn-sm fr-toggle">요구사항 번호 숨기기</button>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

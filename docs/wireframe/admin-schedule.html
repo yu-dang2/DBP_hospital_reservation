@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>진료 스케줄 관리 | 딱맞닥</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- JSP 전환 시: /WEB-INF/views/common/admin-header.jsp -->
+<header class="site-header admin-header">
+  <div class="container-xl inner d-flex align-items-center justify-content-between gap-4">
+    <div class="brand text-white">딱맞닥 원무 관리 <span class="admin-badge">관리자</span></div>
+    <nav class="main-nav d-flex gap-4" aria-label="관리자 메뉴"><a href="admin.html">오늘 예약 현황</a><a href="admin-schedule.html" class="active" aria-current="page">진료 스케줄 관리</a></nav>
+    <a href="login.html" class="btn btn-sm" style="color:#fff;border:1px solid #6A7A90">로그아웃</a>
+  </div>
+</header>
+<main class="page">
+  <div class="container-xl">
+
+    <div class="d-flex align-items-center gap-2 mb-3"><h1>진료 스케줄 관리</h1><span class="fr">FR-34</span></div>
+    <form class="card-w d-flex flex-wrap gap-3 align-items-end py-3 mb-4" action="admin-schedule.html" method="get">
+      <div><label for="sdept" class="form-label small">진료과</label><select id="sdept" name="deptId" class="form-select" style="width:180px"><option>신경과</option></select></div>
+      <div><label for="sdoc" class="form-label small">의사</label><select id="sdoc" name="doctorId" class="form-select" style="width:180px"><option>김○○ 교수</option></select></div>
+      <p class="small-note pb-2">예약 가능 시간은 이 스케줄을 30분 단위로 나눠 계산돼요.</p>
+    </form>
+    <form action="admin-schedule.html" method="post">
+      <div class="row g-4 mb-4">
+        <div class="col-lg-7">
+          <section class="card-w flush">
+            <div class="px-4 py-3 border-bottom"><h2 style="font-size:17px">요일별 진료 시간</h2></div>
+            <div class="table-responsive"><table class="table table-w mb-0"><thead><tr><th scope="col">요일</th><th scope="col">진료 여부</th><th scope="col">시작</th><th scope="col">종료</th></tr></thead><tbody><tr><th scope="row">월</th><td><div class="form-check"><input class="form-check-input" type="checkbox" id="on0" checked><label class="form-check-label small" for="on0">진료</label></div></td><td><input type="time" class="form-control" aria-label="월요일 시작" value="09:00" style="width:130px"></td><td><input type="time" class="form-control" aria-label="월요일 종료" value="12:00" style="width:130px"></td></tr><tr><th scope="row">화</th><td><div class="form-check"><input class="form-check-input" type="checkbox" id="on1" checked><label class="form-check-label small" for="on1">진료</label></div></td><td><input type="time" class="form-control" aria-label="화요일 시작" value="13:30" style="width:130px"></td><td><input type="time" class="form-control" aria-label="화요일 종료" value="17:30" style="width:130px"></td></tr><tr><th scope="row">수</th><td><div class="form-check"><input class="form-check-input" type="checkbox" id="on2" checked><label class="form-check-label small" for="on2">진료</label></div></td><td><input type="time" class="form-control" aria-label="수요일 시작" value="09:00" style="width:130px"></td><td><input type="time" class="form-control" aria-label="수요일 종료" value="12:00" style="width:130px"></td></tr><tr><th scope="row">목</th><td><div class="form-check"><input class="form-check-input" type="checkbox" id="on3" checked><label class="form-check-label small" for="on3">진료</label></div></td><td><input type="time" class="form-control" aria-label="목요일 시작" value="13:30" style="width:130px"></td><td><input type="time" class="form-control" aria-label="목요일 종료" value="17:30" style="width:130px"></td></tr><tr><th scope="row">금</th><td><div class="form-check"><input class="form-check-input" type="checkbox" id="on4" checked><label class="form-check-label small" for="on4">진료</label></div></td><td><input type="time" class="form-control" aria-label="금요일 시작" value="09:00" style="width:130px"></td><td><input type="time" class="form-control" aria-label="금요일 종료" value="12:00" style="width:130px"></td></tr><tr><th scope="row">토</th><td><div class="form-check"><input class="form-check-input" type="checkbox" id="on5" checked><label class="form-check-label small" for="on5">진료</label></div></td><td><input type="time" class="form-control" aria-label="토요일 시작" value="09:00" style="width:130px"></td><td><input type="time" class="form-control" aria-label="토요일 종료" value="12:00" style="width:130px"></td></tr><tr><th scope="row">일</th><td><div class="form-check"><input class="form-check-input" type="checkbox" id="on6"><label class="form-check-label small" for="on6">진료</label></div></td><td colspan="2" class="text-muted-w small">휴무</td></tr></tbody></table></div>
+          </section>
+        </div>
+        <div class="col-lg-5">
+          <section class="card-w">
+            <h2 style="font-size:17px" class="mb-3">휴진일</h2>
+            <div class="d-flex gap-2 align-items-end mb-3">
+              <div><label for="offd" class="form-label small">날짜</label><input id="offd" type="date" class="form-control" style="width:150px"></div>
+              <div class="flex-grow-1"><label for="offr" class="form-label small">사유</label><input id="offr" type="text" class="form-control"></div>
+              <button type="button" class="btn btn-outline-primary">추가</button>
+            </div>
+            <ul class="list-unstyled mb-2"><li class="d-flex align-items-center gap-2 py-2 border-top small"><strong style="width:130px">2026-09-29 (화)</strong><span class="flex-grow-1">학회 참석</span><button type="button" class="btn btn-line btn-sm">삭제</button></li><li class="d-flex align-items-center gap-2 py-2 border-top small"><strong style="width:130px">2026-09-24 ~ 26</strong><span class="flex-grow-1">추석 연휴</span><span class="chip" style="height:24px;font-size:12px">공휴일 API</span></li><li class="d-flex align-items-center gap-2 py-2 border-top small"><strong style="width:130px">2026-10-09 (금)</strong><span class="flex-grow-1">한글날</span><span class="chip" style="height:24px;font-size:12px">공휴일 API</span></li></ul>
+            <p class="small-note">공휴일은 외부 공휴일 API로 자동 반영돼요.</p>
+          </section>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end gap-2"><button type="reset" class="btn btn-line">되돌리기</button><button type="submit" class="btn btn-primary px-4">저장</button></div>
+    </form>
+  </div>
+</main>
+<button type="button" id="frToggle" class="btn btn-line btn-sm fr-toggle">요구사항 번호 숨기기</button>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
