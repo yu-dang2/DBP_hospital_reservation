@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>회원가입 | 딱맞닥</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- JSP 전환 시: /WEB-INF/views/common/header.jsp 로 분리 (로그인 여부는 세션으로 분기) -->
+<header class="site-header">
+  <div class="container-xl inner d-flex align-items-center justify-content-between gap-4">
+    <a href="index.html" class="brand"><span class="brand-mark">+</span>딱맞닥</a>
+    <nav class="main-nav d-flex gap-4" aria-label="주 메뉴"><a href="doctor-list.html">진료과·의사 찾기</a><a href="symptom-result.html">증상으로 찾기</a><a href="reservation-list.html">내 예약</a></nav>
+    <div class="d-flex align-items-center gap-2"><a href="login.html" class="btn btn-line btn-sm">로그인</a><a href="signup.html" class="btn btn-primary btn-sm">회원가입</a></div>
+  </div>
+</header>
+<main class="page">
+  <div class="container-xl">
+
+    <div class="card-w mx-auto p-4 p-lg-5" style="max-width:560px">
+      <div class="d-flex align-items-center gap-2 mb-4"><h1 style="font-size:26px">회원가입</h1><span class="fr">FR-01</span></div>
+      <form action="login.html" method="post" class="d-flex flex-column gap-3">
+        <div>
+          <label for="sid" class="form-label">아이디</label>
+          <div class="d-flex gap-2"><input id="sid" name="userId" type="text" class="form-control" value="patient01" required aria-describedby="sidMsg"><button type="button" id="dupCheck" class="btn btn-outline-primary text-nowrap">중복 확인</button></div>
+          <div class="d-flex align-items-center gap-2 mt-1"><span id="sidMsg" class="small" style="color:var(--ok)" aria-live="polite">사용 가능한 아이디예요.</span><span class="fr">FR-02</span></div>
+        </div>
+        <div><label for="spw" class="form-label">비밀번호</label><input id="spw" name="password" type="password" class="form-control" autocomplete="new-password" required></div>
+        <div><label for="spw2" class="form-label">비밀번호 확인</label><input id="spw2" type="password" class="form-control" autocomplete="new-password" required aria-describedby="pwMsg"><span id="pwMsg" class="small" style="color:var(--danger)" aria-live="polite"></span></div>
+        <div class="row g-3">
+          <div class="col-sm-6"><label for="sname" class="form-label">이름</label><input id="sname" name="name" type="text" class="form-control" required></div>
+          <div class="col-sm-6"><label for="sbirth" class="form-label">생년월일</label><input id="sbirth" name="birth" type="date" class="form-control" required></div>
+        </div>
+        <div><label for="stel" class="form-label">연락처</label><input id="stel" name="phone" type="tel" class="form-control" placeholder="010-0000-0000" required></div>
+        <div><label for="smail" class="form-label">이메일</label><input id="smail" name="email" type="email" class="form-control" required></div>
+        <button type="submit" class="btn btn-primary btn-lg mt-2">가입하기</button>
+      </form>
+    </div>
+  </div>
+</main>
+<button type="button" id="frToggle" class="btn btn-line btn-sm fr-toggle">요구사항 번호 숨기기</button>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

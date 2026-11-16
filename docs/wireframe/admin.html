@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>관리자 예약 현황 | 딱맞닥</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- JSP 전환 시: /WEB-INF/views/common/admin-header.jsp -->
+<header class="site-header admin-header">
+  <div class="container-xl inner d-flex align-items-center justify-content-between gap-4">
+    <div class="brand text-white">딱맞닥 원무 관리 <span class="admin-badge">관리자</span></div>
+    <nav class="main-nav d-flex gap-4" aria-label="관리자 메뉴"><a href="admin.html" class="active" aria-current="page">오늘 예약 현황</a><a href="admin-schedule.html">진료 스케줄 관리</a></nav>
+    <a href="login.html" class="btn btn-sm" style="color:#fff;border:1px solid #6A7A90">로그아웃</a>
+  </div>
+</header>
+<main class="page">
+  <div class="container-xl">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+      <div><div class="d-flex align-items-center gap-2"><h1>오늘 예약 현황</h1><span class="fr">FR-31 · View</span></div><div class="text-muted-w mt-1">2026년 9월 21일(월)</div></div>
+      <form class="d-flex gap-2 align-items-end" action="admin.html" method="get">
+        <div><label for="adate" class="form-label small">날짜</label><input id="adate" name="date" type="date" class="form-control" value="2026-09-21"></div>
+        <div><label for="adept" class="form-label small">진료과</label><select id="adept" name="deptId" class="form-select" style="width:160px"><option>전체</option><option>신경과</option><option>내과</option></select></div>
+        <button type="submit" class="btn btn-line">조회</button>
+      </form>
+    </div>
+    <div class="row g-3 mb-4"><div class="col-6 col-lg-3"><div class="card-w stat"><span class="small-note">전체 예약</span><strong style="color:var(--text)">[n]</strong></div></div><div class="col-6 col-lg-3"><div class="card-w stat"><span class="small-note">진료 대기</span><strong style="color:var(--ac)">[n]</strong></div></div><div class="col-6 col-lg-3"><div class="card-w stat"><span class="small-note">진료완료</span><strong style="color:var(--ok)">[n]</strong></div></div><div class="col-6 col-lg-3"><div class="card-w stat"><span class="small-note">노쇼</span><strong style="color:var(--danger)">[n]</strong></div></div></div>
+    <div class="row g-4">
+      <div class="col-xl-8 d-flex flex-column gap-3">
+        <div><span class="fr">FR-32 상태 변경</span></div>
+        <section class="card-w flush"><div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom"><h2 style="font-size:16px">신경과 · 김○○ 교수</h2><span class="small-note">5건</span></div><div class="table-responsive"><table class="table table-w mb-0"><thead><tr><th scope="col">시간</th><th scope="col">환자</th><th scope="col">연락처</th><th scope="col">상태</th><th scope="col">처리</th></tr></thead><tbody><tr><td class="fw-semibold">09:00</td><td>홍○○</td><td class="text-muted-w">010-****-1234</td><td><span class="status s-done">진료완료</span></td><td><button type="button" class="btn btn-primary btn-sm">진료기록 등록</button></td></tr><tr><td class="fw-semibold">09:30</td><td>윤○○</td><td class="text-muted-w">010-****-5678</td><td><span class="status s-done">진료완료</span></td><td><span class="small" style="color:var(--ok)">기록 등록됨</span></td></tr><tr><td class="fw-semibold">10:00</td><td>서○○</td><td class="text-muted-w">010-****-2468</td><td><span class="status s-noshow">노쇼</span></td><td><span class="small-note">—</span></td></tr><tr><td class="fw-semibold">10:30</td><td>장○○</td><td class="text-muted-w">010-****-1357</td><td><span class="status s-wait">예약완료</span></td><td><div class="d-flex gap-1"><button type="button" class="btn btn-outline-primary btn-sm">진료완료</button><button type="button" class="btn btn-line btn-sm" style="color:var(--danger)">노쇼</button></div></td></tr><tr><td class="fw-semibold">11:00</td><td>오○○</td><td class="text-muted-w">010-****-9753</td><td><span class="status s-wait">예약완료</span></td><td><div class="d-flex gap-1"><button type="button" class="btn btn-outline-primary btn-sm">진료완료</button><button type="button" class="btn btn-line btn-sm" style="color:var(--danger)">노쇼</button></div></td></tr></tbody></table></div></section>
+        <section class="card-w flush"><div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom"><h2 style="font-size:16px">내과 · 이○○ 교수</h2><span class="small-note">2건</span></div><div class="table-responsive"><table class="table table-w mb-0"><thead><tr><th scope="col">시간</th><th scope="col">환자</th><th scope="col">연락처</th><th scope="col">상태</th><th scope="col">처리</th></tr></thead><tbody><tr><td class="fw-semibold">09:00</td><td>임○○</td><td class="text-muted-w">010-****-8642</td><td><span class="status s-wait">예약완료</span></td><td><div class="d-flex gap-1"><button type="button" class="btn btn-outline-primary btn-sm">진료완료</button><button type="button" class="btn btn-line btn-sm" style="color:var(--danger)">노쇼</button></div></td></tr><tr><td class="fw-semibold">10:00</td><td>강○○</td><td class="text-muted-w">010-****-3197</td><td><span class="status s-wait">예약완료</span></td><td><div class="d-flex gap-1"><button type="button" class="btn btn-outline-primary btn-sm">진료완료</button><button type="button" class="btn btn-line btn-sm" style="color:var(--danger)">노쇼</button></div></td></tr></tbody></table></div></section>
+      </div>
+      <div class="col-xl-4">
+        <form class="card-w d-flex flex-column gap-3" action="admin.html" method="post" aria-labelledby="recTitle">
+          <div class="d-flex align-items-center gap-2"><h2 id="recTitle" style="font-size:17px">진료기록 등록</h2><span class="fr">FR-33</span></div>
+          <div class="small-note">홍○○ · 09:00 · 신경과 김○○ 교수</div>
+          <div><label for="dx" class="form-label">진단 내용</label><textarea id="dx" name="diagnosis" class="form-control" rows="4"></textarea></div>
+          <div><label for="rx" class="form-label">처방·소견</label><textarea id="rx" name="prescription" class="form-control" rows="4"></textarea></div>
+          <div class="d-flex gap-2"><button type="button" class="btn btn-line flex-fill">닫기</button><button type="submit" class="btn btn-primary flex-fill">저장</button></div>
+          <p class="small-note">진료완료 처리한 예약에만 등록할 수 있어요.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+<button type="button" id="frToggle" class="btn btn-line btn-sm fr-toggle">요구사항 번호 숨기기</button>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

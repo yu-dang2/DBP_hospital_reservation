@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>회원정보 수정 | 딱맞닥</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- JSP 전환 시: /WEB-INF/views/common/header.jsp 로 분리 (로그인 여부는 세션으로 분기) -->
+<header class="site-header">
+  <div class="container-xl inner d-flex align-items-center justify-content-between gap-4">
+    <a href="index.html" class="brand"><span class="brand-mark">+</span>딱맞닥</a>
+    <nav class="main-nav d-flex gap-4" aria-label="주 메뉴"><a href="doctor-list.html">진료과·의사 찾기</a><a href="symptom-result.html">증상으로 찾기</a><a href="reservation-list.html">내 예약</a></nav>
+    <div class="d-flex align-items-center gap-3"><a href="mypage.html" class="fw-semibold text-decoration-none" style="color:var(--text)">김○○님 · 마이페이지</a><a href="login.html" class="btn btn-line btn-sm">로그아웃</a></div>
+  </div>
+</header>
+<main class="page">
+  <div class="container-xl">
+
+    <div class="row g-4">
+      <div class="col-lg-3"><nav class="card-w side-nav" aria-label="마이페이지 메뉴"><div class="label">마이페이지</div><a href="mypage.html">마이페이지 홈</a><a href="reservation-list.html">예약 내역</a><a href="records.html">진료 기록</a><a href="profile-edit.html" class="active" aria-current="page">회원정보 수정</a><a href="withdraw.html" class="danger">회원 탈퇴</a></nav></div>
+      <div class="col-lg-9">
+        <div class="d-flex align-items-center gap-2 mb-1"><h1>회원정보 수정</h1><span class="fr">FR-05</span></div>
+        <p class="text-muted-w mb-4">연락처, 이메일, 비밀번호를 바꿀 수 있어요.</p>
+        <form action="mypage.html" method="post" class="d-flex flex-column gap-4" style="max-width:720px">
+          <section class="card-w" aria-labelledby="baseTitle">
+            <h2 id="baseTitle" style="font-size:17px" class="mb-3">기본 정보</h2>
+            <div class="row g-3">
+              <div class="col-sm-6"><label for="eid" class="form-label">아이디</label><input id="eid" type="text" class="form-control" value="patient01" readonly><div class="form-text">아이디는 바꿀 수 없어요.</div></div>
+              <div class="col-sm-6"><label for="ename" class="form-label">이름</label><input id="ename" type="text" class="form-control" value="김○○" readonly></div>
+              <div class="col-sm-6"><label for="ebirth" class="form-label">생년월일</label><input id="ebirth" type="text" class="form-control" value="[YYYY-MM-DD]" readonly></div>
+              <div class="col-sm-6"><label for="etel" class="form-label">연락처</label><input id="etel" name="phone" type="tel" class="form-control" value="010-1234-1234" required></div>
+              <div class="col-12"><label for="email" class="form-label">이메일</label><input id="email" name="email" type="email" class="form-control" value="patient01@example.com" required></div>
+            </div>
+          </section>
+          <section class="card-w" aria-labelledby="pwTitle">
+            <h2 id="pwTitle" style="font-size:17px" class="mb-1">비밀번호 변경</h2>
+            <p class="small-note mb-3">바꾸지 않으려면 비워 두세요.</p>
+            <div class="d-flex flex-column gap-3">
+              <div><label for="cpw" class="form-label">현재 비밀번호</label><input id="cpw" name="currentPassword" type="password" class="form-control" autocomplete="current-password"></div>
+              <div><label for="spw" class="form-label">새 비밀번호</label><input id="spw" name="newPassword" type="password" class="form-control" autocomplete="new-password"></div>
+              <div><label for="spw2" class="form-label">새 비밀번호 확인</label><input id="spw2" type="password" class="form-control" autocomplete="new-password" aria-describedby="pwMsg"><span id="pwMsg" class="small" style="color:var(--danger)" aria-live="polite"></span></div>
+            </div>
+          </section>
+          <div class="d-flex justify-content-end gap-2"><a href="mypage.html" class="btn btn-line">취소</a><button type="submit" class="btn btn-primary px-4">저장하기</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+<button type="button" id="frToggle" class="btn btn-line btn-sm fr-toggle">요구사항 번호 숨기기</button>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
