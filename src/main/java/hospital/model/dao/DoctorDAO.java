@@ -9,6 +9,12 @@ import hospital.model.domain.Doctor;
 import util.JDBCUtil;
 
 public class DoctorDAO {
+    // 의사 정보 + 소속 진료과명 (DEPT_ID는 NOT NULL FK라 INNER JOIN)
+    private static final String SELECT_DOCTOR_COLUMNS =
+            "SELECT d.DOCTOR_ID, d.NAME, d.SPECIALTY, d.BIO, d.DEPT_ID, dept.DEPT_NAME "
+            + "FROM DOCTOR d "
+            + "JOIN DEPARTMENT dept ON d.DEPT_ID = dept.DEPT_ID ";
+
     private JDBCUtil jdbcUtil = null;
     
     public DoctorDAO() {
@@ -20,9 +26,8 @@ public class DoctorDAO {
         List<Doctor> doctorList = new ArrayList<Doctor>();
         
         StringBuffer query = new StringBuffer();
-        query.append("SELECT DOCTOR_ID, NAME, SPECIALTY, BIO, DEPT_ID ");
-        query.append("FROM DOCTOR ");
-        query.append("ORDER BY NAME ");
+        query.append(SELECT_DOCTOR_COLUMNS);
+        query.append("ORDER BY d.NAME ");
         
         jdbcUtil.setSqlAndParameters(query.toString(), null);
         
@@ -43,9 +48,8 @@ public class DoctorDAO {
     // 의사 한 명 조회하기
     public Doctor findById(Long doctorId) throws SQLException {
         StringBuffer query = new StringBuffer();
-        query.append("SELECT DOCTOR_ID, NAME, SPECIALTY, BIO, DEPT_ID ");
-        query.append("FROM DOCTOR ");
-        query.append("WHERE DOCTOR_ID = ? ");
+        query.append(SELECT_DOCTOR_COLUMNS);
+        query.append("WHERE d.DOCTOR_ID = ? ");
         
         jdbcUtil.setSqlAndParameters(query.toString(), new Object[] { doctorId });
         
@@ -68,9 +72,7 @@ public class DoctorDAO {
         List<Doctor> doctorList = new ArrayList<Doctor>();
         
         StringBuffer query = new StringBuffer();
-        query.append("SELECT d.DOCTOR_ID, d.NAME, d.SPECIALTY, d.BIO, d.DEPT_ID ");
-        query.append("FROM DOCTOR d ");
-        query.append("JOIN DEPARTMENT dept ON d.DEPT_ID = dept.DEPT_ID ");
+        query.append(SELECT_DOCTOR_COLUMNS);
         query.append("WHERE d.NAME LIKE ? OR dept.DEPT_NAME LIKE ? ");
         query.append("ORDER BY d.NAME ");
         
@@ -96,10 +98,9 @@ public class DoctorDAO {
         List<Doctor> doctorList = new ArrayList<Doctor>();
         
         StringBuffer query = new StringBuffer();
-        query.append("SELECT DOCTOR_ID, NAME, SPECIALTY, BIO, DEPT_ID ");
-        query.append("FROM DOCTOR ");
-        query.append("WHERE DEPT_ID = ? ");
-        query.append("ORDER BY NAME ");
+        query.append(SELECT_DOCTOR_COLUMNS);
+        query.append("WHERE d.DEPT_ID = ? ");
+        query.append("ORDER BY d.NAME ");
         
         jdbcUtil.setSqlAndParameters(query.toString(), new Object[] { deptId });
         
@@ -125,6 +126,7 @@ public class DoctorDAO {
         doctor.setSpecialty(rs.getString("SPECIALTY"));
         doctor.setBio(rs.getString("BIO"));
         doctor.setDeptId(rs.getLong("DEPT_ID"));
+        doctor.setDepartmentName(rs.getString("DEPT_NAME"));
         
         return doctor;
     } 
