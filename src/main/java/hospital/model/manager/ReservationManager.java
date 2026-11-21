@@ -82,9 +82,14 @@ public class ReservationManager {
         if (reservation.getStatus() != ReservationStatus.RESERVED) {
             return 0;
         }
+        
+        // 변경하려는 예약 시간이 현재보다 미래인지 확인(추가)
+        if (reserveDateTime == null || !reserveDateTime.after(new Date())) {
+            return 0;
+        }
+
 
         reservation.changeSchedule(reserveDateTime);
-
         return reservationDAO.update(reservation);
     }
     
