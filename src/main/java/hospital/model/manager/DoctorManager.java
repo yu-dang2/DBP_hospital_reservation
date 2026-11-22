@@ -9,11 +9,20 @@ import java.util.Map;
 
 import hospital.model.dao.DepartmentDAO;
 import hospital.model.dao.DoctorDAO;
+import hospital.model.dao.DoctorOffDAO;
+import hospital.model.dao.DoctorScheduleDAO;
 import hospital.model.dao.SymptomKeywordDAO;
 import hospital.model.domain.Department;
 import hospital.model.domain.Doctor;
+import hospital.model.domain.DoctorOff;
+import hospital.model.domain.DoctorSchedule;
+import hospital.model.domain.OffSource;
 import hospital.model.domain.SymptomKeyword;
 import hospital.model.domain.SymptomRecommendation;
+import hospital.model.exception.DoctorOffNotDeletableException;
+import hospital.model.exception.ExistingDoctorOffException;
+import hospital.model.exception.InvalidScheduleException;
+import hospital.model.exception.InvalidStatusChangeException;
 import hospital.model.exception.InvalidSymptomException;
 
 // 진료과·의사 조회 및 증상 기반 진료과 추천 업무 처리
@@ -26,11 +35,17 @@ public class DoctorManager {
     private DepartmentDAO departmentDAO;
     private DoctorDAO doctorDAO;
     private SymptomKeywordDAO symptomKeywordDAO;
+    private DoctorScheduleDAO doctorScheduleDAO;
+    private DoctorOffDAO doctorOffDAO;
+    
 
     private DoctorManager() {
         departmentDAO = new DepartmentDAO();
         doctorDAO = new DoctorDAO();
         symptomKeywordDAO = new SymptomKeywordDAO();
+        doctorScheduleDAO = new DoctorScheduleDAO();
+        doctorOffDAO = new DoctorOffDAO();
+        
     }
 
     public static DoctorManager getInstance() {
@@ -114,5 +129,81 @@ public class DoctorManager {
     // 입력값이 null or 공백이면 true 반환
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
+    }
+    
+    
+    /*========관리자 기능 추가 =========*/
+    //전체 의사 조회(오버로딩)
+    public List<Doctor> findDoctorList()throws SQLException{
+    	return doctorDAO.findAll();
+    	
+    }
+    
+    public Doctor findDoctor(Long doctorId) throws SQLException{
+    	Doctor doctor = doctorDAO.findById(doctorId);
+    	//의사 없음
+    	if(doctor == null) {
+    		return null;
+    	}
+    	
+    	//일정목록
+    	List<DoctorSchedule> doctorSchedules= doctorScheduleDAO.findByDoctorId(doctorId);
+    	
+    	//휴진 목록
+    	List<DoctorOff> doctorOffs = doctorOffDAO.findByDoctorId(doctorId);
+    	
+    	doctor.setSchedules(doctorSchedules);
+    	doctor.setOffs(doctorOffs);
+    	return doctor;
+    }
+    
+    public void updateSchedule(DoctorSchedule schedule)
+            throws SQLException, InvalidScheduleException{
+    	
+    	// 1. 휴무가 아니면 시간 순서 확인
+    	if(!schedule.isDayOff() && schedule.getStartTime().compareTo(schedule.getEndTime()) >= 0){
+    		throw new InvalidScheduleException("진료 시작 시간은 종료 시간보다 빨라야 합니다.");
+    	}
+    	
+        // 2. 수정
+    	int result = doctorScheduleDAO.update(schedule);
+ 
+    	
+        // 3. 0이면 실패		
+		if (result == 0)
+			throw new InvalidScheduleException("수정할 진료 일정이 없습니다.");
+
+    }  
+    
+    public void createDoctorOff(DoctorOff off)
+            throws SQLException, ExistingDoctorOffException{
+    	//같은 날에 휴진이 있는지 확인
+    	if(doctorOffDAO.existsByDoctorIdAndDate(off.getDoctorId(), off.getOffDate())){
+    		throw new ExistingDoctorOffException("이미 휴진으로 등록된 날짜입니다.");
+    	}
+    	//등록 경로 정하기
+    	off.setSource(OffSource.MANUAL);
+    	//등록
+    	doctorOffDAO.create(off);   	
+    }
+    
+    public void deleteDoctorOff(Long offId)
+            throws SQLException, DoctorOffNotDeletableException{
+    	
+    	DoctorOff off = doctorOffDAO.findById(offId);
+    	
+    	if(off == null) {
+    		throw new DoctorOffNotDeletableException("존재하지 않는 휴진입니다.");
+    	}
+    	
+    	if(!off.isDeletable()) {
+    		throw new DoctorOffNotDeletableException("공휴일로 등록된 휴진은 삭제할 수 없습니다.");
+    	}
+    	
+    	int delete = doctorOffDAO.delete(offId);
+    	
+    	if(delete == 0) {
+    		throw new DoctorOffNotDeletableException("휴진 삭제에 실패했습니다.");
+    	}
     }
 }
