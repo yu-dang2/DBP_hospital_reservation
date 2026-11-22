@@ -1,6 +1,6 @@
 package hospital.model.domain;
 
-import java.util.date;
+import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 
