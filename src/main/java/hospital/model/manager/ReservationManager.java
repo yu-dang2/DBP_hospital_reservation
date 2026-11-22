@@ -55,9 +55,14 @@ public class ReservationManager {
     // 예약 등록
     public int createReservation(Reservation reservation) throws SQLException {
 
+        Date reserveDateTime = reservation.getReservationDate();
+
+        if (reserveDateTime == null || !reserveDateTime.after(new Date())) {
+            return 0;
+        }
         boolean exists = reservationDAO.existsActiveReservation(
             reservation.getDoctor().getDoctorId(),
-            reservation.getReservationDate()
+            reserveDateTime
         );
 
         if (exists) {
