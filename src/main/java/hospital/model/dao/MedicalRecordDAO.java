@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import.java.util.Date;
 
 import hospital.model.domain.MedicalRecord;
 import hospital.model.domain.MedicalRecordSummary;
@@ -99,7 +100,7 @@ public class MedicalRecordDAO {
             while (rs.next()) {
                 recordList.add(new MedicalRecordSummary(
                         rs.getLong("RECORD_ID"),
-                        rs.getTimestamp("RESERVATION_DATE").toLocalDateTime().toLocalDate(),
+                        rs.getDate("RESERVATION_DATE"),
                         rs.getString("DOCTOR_NAME"),
                         rs.getString("DIAGNOSIS")));
             }
