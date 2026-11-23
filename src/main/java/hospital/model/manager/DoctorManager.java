@@ -183,8 +183,19 @@ public class DoctorManager {
     	}
     	//등록 경로 정하기
     	off.setSource(OffSource.MANUAL);
-    	//등록
-    	doctorOffDAO.create(off);   	
+    	
+    	try {
+    		//등록(동시에 등록되어 UNIQUE 제약에 걸린 경우도 중복으로 처리)
+    		doctorOffDAO.create(off);
+    	}catch(SQLException ex) {
+    		if(ex.getErrorCode() == 1) {
+    			throw new ExistingDoctorOffException("이미 휴진으로 등록된 날짜입니다.");
+    		}
+    		else {
+    			throw ex;
+    		}
+    	
+    	}
     }
     
     public void deleteDoctorOff(Long offId)

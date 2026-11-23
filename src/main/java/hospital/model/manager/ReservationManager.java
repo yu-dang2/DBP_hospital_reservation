@@ -210,10 +210,21 @@ public class ReservationManager {
 
 		// 중복확인
 		boolean exists = medicalRecordDAO.existsByReservationId(reservationId);
-
 		if (exists) {
 			throw new ExistingMedicalRecordException("이미 진료기록이 등록된 예약입니다.");
 		}
+		// 등록 (동시에 등록되어 UNIQUE 제약에 걸린 경우도 중복으로 처리)
+		try{
+			medicalRecordDAO.create(record);
+		}catch(SQLException ex) {
+			if(ex.getErrorCode() == 1) {
+				throw new ExistingMedicalRecordException("이미 진료기록이 등록된 예약입니다.");
+			}
+			else {
+				throw ex;
+			}
+		}
+
 
 		// 등록
 		medicalRecordDAO.create(record);
