@@ -224,9 +224,5 @@ public class ReservationManager {
 				throw ex;
 			}
 		}
-
-
-		// 등록
-		medicalRecordDAO.create(record);
 	}
 }
