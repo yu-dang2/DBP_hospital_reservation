@@ -16,6 +16,7 @@ public class Doctor {
     private String specialty;
     private String bio;
     private Long deptId;
+    private String departmentName;   // 소속 진료과명 (DoctorDAO에서 DEPARTMENT JOIN으로 채움)
 
     private List<DoctorSchedule> schedules = new ArrayList<>();
     private List<DoctorOff> offs = new ArrayList<>();
@@ -54,9 +55,5 @@ public class Doctor {
         return false;
     }
 
-    // 주요 메서드 6: 진료과 이름 조회
-    public String getDepartmentName() {
-    	//구현필요합니다
-        return null;
-    }
+    // 주요 메서드 6: 진료과 이름 조회 -> departmentName 필드의 Lombok getter로 대체
 }
