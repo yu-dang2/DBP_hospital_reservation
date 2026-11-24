@@ -91,7 +91,11 @@ public class ReservationController extends HttpServlet {
     private void showReservationForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
 
-        Long doctorId = Long.parseLong(request.getParameter("doctorId"));
+    	Long doctorId = parseIdParameter(request, response, "doctorId");
+
+    	if (doctorId == null) {
+    	    return;
+    	}
 
         ReservationFormData formData =
                 reservationManager.findReservationFormData(doctorId);
@@ -102,8 +106,8 @@ public class ReservationController extends HttpServlet {
         }
 
         request.setAttribute("formData", formData);
-        request.getRequestDispatcher("/reservation/reservationForm.jsp")
-               .forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/reservation/reservationForm.jsp")
+        	.forward(request, response);
     }
 
     // 2. 예약 등록
@@ -111,10 +115,18 @@ public class ReservationController extends HttpServlet {
             throws ServletException, IOException, SQLException {
     	
         Long memberId = (Long) request.getSession().getAttribute("memberId");
-        Long doctorId = Long.parseLong(request.getParameter("doctorId"));
+        Long doctorId = parseIdParameter(request, response, "doctorId");
+
+        if (doctorId == null) {
+            return;
+        }
 
         java.util.Date reservationDate =
-                parseReservationDate(request.getParameter("reservationDate"));
+                parseReservationDate(request.getParameter("reservationDate"), response);
+
+        if (reservationDate == null) {
+            return;
+        }
 
         GeneralMember member = new GeneralMember();
         member.setMemberId(memberId);
@@ -150,8 +162,8 @@ public class ReservationController extends HttpServlet {
             request.setAttribute("formData", formData);
 
             // 예약 등록 화면으로 이동하기
-            request.getRequestDispatcher("/reservation/reservationForm.jsp")
-                   .forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/reservation/reservationForm.jsp")
+            		.forward(request, response);
         }
     }
 
@@ -167,8 +179,8 @@ public class ReservationController extends HttpServlet {
         request.setAttribute("reservationList", reservationList); //결과 전달
 
         // 예약 목록 화면으로 이동하기
-        request.getRequestDispatcher("/reservation/reservationList.jsp")
-               .forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/reservation/reservationList.jsp")
+        	.forward(request, response);
     }
 
     // 4. 예약 상세
@@ -176,7 +188,11 @@ public class ReservationController extends HttpServlet {
             throws ServletException, IOException, SQLException {
 
         Long memberId = (Long) request.getSession().getAttribute("memberId");
-        Long reservationId = Long.parseLong(request.getParameter("reservationId"));
+        Long reservationId = parseIdParameter(request, response, "reservationId");
+
+        if (reservationId == null) {
+            return;
+        }
 
         // 본인의 예약인지 확인 + 상세 조회
         Reservation reservation =
@@ -189,8 +205,8 @@ public class ReservationController extends HttpServlet {
         request.setAttribute("reservation", reservation);
 
         // 예약 상세 화면으로 이동하기
-        request.getRequestDispatcher("/reservation/reservationDetail.jsp")
-               .forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/reservation/reservationDetail.jsp")
+        	.forward(request, response);
     }
 
     // 5. 예약 변경 화면
@@ -198,7 +214,11 @@ public class ReservationController extends HttpServlet {
             throws ServletException, IOException, SQLException {
 
         Long memberId = (Long) request.getSession().getAttribute("memberId");
-        Long reservationId = Long.parseLong(request.getParameter("reservationId"));
+        Long reservationId = parseIdParameter(request, response, "reservationId");
+
+        if (reservationId == null) {
+            return;
+        }
 
         // 본인의 예약인지 확인 + 예약 정보 조회
         Reservation reservation =
@@ -219,8 +239,8 @@ public class ReservationController extends HttpServlet {
         request.setAttribute("reservation", reservation);
 
         // 예약 변경 화면으로 이동하기
-        request.getRequestDispatcher("/reservation/reservationUpdateForm.jsp")
-               .forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/reservation/reservationUpdateForm.jsp")
+        	.forward(request, response);
     }
 
     // 6. 예약 변경
@@ -228,10 +248,18 @@ public class ReservationController extends HttpServlet {
             throws ServletException, IOException, SQLException {
 
         Long memberId = (Long) request.getSession().getAttribute("memberId");
-        Long reservationId = Long.parseLong(request.getParameter("reservationId"));
+        Long reservationId = parseIdParameter(request, response, "reservationId");
+
+        if (reservationId == null) {
+            return;
+        }
 
         java.util.Date reservationDate =
-                parseReservationDate(request.getParameter("reservationDate"));
+                parseReservationDate(request.getParameter("reservationDate"), response);
+
+        if (reservationDate == null) {
+            return;
+        }
 
         // 예약 변경 요청
         int result = reservationManager.updateReservation(
@@ -253,8 +281,8 @@ public class ReservationController extends HttpServlet {
 
         	request.setAttribute("reservation", reservation);
 
-        	request.getRequestDispatcher("/reservation/reservationUpdateForm.jsp")
-        	       .forward(request, response);
+        	request.getRequestDispatcher("/WEB-INF/views/reservation/reservationUpdateForm.jsp")
+            	.forward(request, response);
         }
     }
 
@@ -263,7 +291,11 @@ public class ReservationController extends HttpServlet {
             throws ServletException, IOException, SQLException {
 
         Long memberId = (Long) request.getSession().getAttribute("memberId");
-        Long reservationId = Long.parseLong(request.getParameter("reservationId"));
+        Long reservationId = parseIdParameter(request, response, "reservationId");
+
+        if (reservationId == null) {
+            return;
+        }
 
         // 예약 취소 요청
         int result = reservationManager.cancelReservation(reservationId, memberId);
@@ -285,14 +317,22 @@ public class ReservationController extends HttpServlet {
 
             request.setAttribute("reservation", reservation);
 
-            request.getRequestDispatcher("/reservation/reservationDetail.jsp")
-                   .forward(request, response);
-        }
+            request.getRequestDispatcher("/WEB-INF/views/reservation/reservationDetail.jsp")
+            	.forward(request, response);
+        }	
     }
     
     // 예약 일시 문자열을 Date 객체로 변환 -> 코드 단순화를 위해 추가함
-    private java.util.Date parseReservationDate(String dateTime)
-            throws ServletException {
+    private java.util.Date parseReservationDate(
+            String dateTime, HttpServletResponse response) throws IOException {
+
+        if (dateTime == null || dateTime.trim().isEmpty()) {
+            response.sendError(
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    "예약 일시가 누락되었습니다."
+            );
+            return null;
+        }
 
         java.text.SimpleDateFormat sdf =
                 new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
@@ -300,9 +340,66 @@ public class ReservationController extends HttpServlet {
         sdf.setLenient(false);
 
         try {
-            return sdf.parse(dateTime);
-        } catch (java.text.ParseException e) {
-            throw new ServletException("올바르지 않은 형식입니다.", e);
+            java.text.ParsePosition position = new java.text.ParsePosition(0);
+            java.util.Date date = sdf.parse(dateTime.trim(), position);
+
+            if (date == null || position.getIndex() != dateTime.trim().length()) {
+                response.sendError(
+                        HttpServletResponse.SC_BAD_REQUEST,
+                        "올바르지 않은 예약 일시입니다."
+                );
+                return null;
+            }
+
+            return date;
+
+        } catch (IllegalArgumentException e) {
+            response.sendError(
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    "올바르지 않은 예약 일시입니다."
+            );
+            return null;
         }
     }
+    
+    // 요청 파라미터의 ID 검증
+    private Long parseIdParameter(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            String parameterName) throws IOException {
+
+        String value = request.getParameter(parameterName);
+
+        // 파라미터 누락 또는 빈 값 검사
+        if (value == null || value.trim().isEmpty()) {
+            response.sendError(
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    parameterName + "이(가) 누락되었습니다."
+            );
+            return null;
+        }
+
+        // 숫자 변환 검사
+        try {
+            Long id = Long.parseLong(value.trim());
+
+            if (id <= 0) {
+                response.sendError(
+                        HttpServletResponse.SC_BAD_REQUEST,
+                        parameterName + "은(는) 양수여야 합니다."
+                );
+                return null;
+            }
+
+            return id;
+
+        } catch (NumberFormatException e) {
+            response.sendError(
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    parameterName + " 형식이 올바르지 않습니다."
+            );
+            return null;
+        }
+    }
+    
 }
