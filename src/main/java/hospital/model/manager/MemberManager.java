@@ -4,6 +4,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import hospital.model.domain.Reservation;
+import hospital.model.domain.ReservationSummary;
 import hospital.model.dao.MedicalRecordDAO;
 import hospital.model.dao.MemberDAO;
 import hospital.model.dao.ReservationDAO;
@@ -21,8 +25,6 @@ public class MemberManager {
     private static final int ORACLE_UNIQUE_VIOLATION = 1; 
 
     private final MemberDAO memberDAO = new MemberDAO();
-    private final ReservationDAO reservationDAO = new ReservationDAO();
-    private final MedicalRecordDAO medicalRecordDAO = new MedicalRecordDAO();
 
     // 아이디 등록 확인 및 사용 가능 여부 확인
     public boolean isUserIdAvailable(String userId) throws SQLException {
@@ -70,7 +72,7 @@ public class MemberManager {
         if (!member.isActive()) {
             return AuthenticationResult.fail("탈퇴한 계정입니다.");
         }
-        return AuthenticationResult.success(member.getMemberId(), member.getRole());
+        return AuthenticationResult.success(member.getMemberId(), member.getRole().name());
     }
 
     // 마이페이지 회원 조회시 사용
@@ -83,16 +85,35 @@ public class MemberManager {
     }
 
     // 마이페이지에서 회원정보, 예약·진료기록 조회
-    public MyPageResult getMyPage(Long memberId) throws SQLException {
-        Member member = getMember(memberId);
-        if (member == null || !member.isActive()) {
-            return null;
-        }
-        return new MyPageResult(
-                member,
-                reservationDAO.findRecentByMemberId(memberId),
-                medicalRecordDAO.findRecentByMemberId(memberId));
+   public MyPageResult getMyPage(Long memberId) throws SQLException {
+    Member member = getMember(memberId);
+    if (member == null || !member.isActive()) {
+        return null;
     }
+
+    ReservationDAO reservationDAO = new ReservationDAO();
+    MedicalRecordDAO medicalRecordDAO = new MedicalRecordDAO();
+
+    List<ReservationSummary> recentReservations = new ArrayList<>();
+    for (Reservation reservation : reservationDAO.findRecentByMemberId(memberId)) {
+        recentReservations.add(toSummary(reservation));
+    }
+
+    return new MyPageResult(
+            member,
+            recentReservations,
+            medicalRecordDAO.findRecentByMemberId(memberId));
+}
+
+// Reservation -> 마이페이지용 요약 객체 변환
+private ReservationSummary toSummary(Reservation reservation) {
+    ReservationSummary summary = new ReservationSummary();
+    summary.setReservationId(reservation.getReservationId());
+    summary.setDoctorName(reservation.getDoctor().getName());
+    summary.setReservationDate(reservation.getReservationDate());
+    summary.setStatus(reservation.getStatus());
+    return summary;
+}
 
     // 회원 정보 수정
     public MemberOperationResult updateMember(Long memberId, Member input) throws SQLException {
@@ -127,6 +148,9 @@ public class MemberManager {
     // 회원 탈퇴 
     // 예정된 예약이 없을 경우만 탈퇴로 변경
     public MemberOperationResult withdraw(Long memberId, String password) throws SQLException {
+
+        ReservationDAO reservationDAO = new ReservationDAO();
+
         Member current = memberDAO.findById(memberId);
         if (current == null || !current.isActive()) {
             return MemberOperationResult.fail("회원 정보를 찾을 수 없습니다.");
