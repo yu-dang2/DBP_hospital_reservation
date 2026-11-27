@@ -66,6 +66,7 @@ public class DoctorController extends HttpServlet {
 
         request.setAttribute("department", department);
         request.setAttribute("doctorList", doctorList);
+        request.setAttribute("departmentList", doctorManager.findDepartmentList()); // 왼쪽 진료과 메뉴
         request.getRequestDispatcher("/WEB-INF/views/search/doctor-list.jsp")
             .forward(request, response);
     }
@@ -90,6 +91,7 @@ public class DoctorController extends HttpServlet {
             request.setAttribute("message", "검색 결과가 없습니다.");
         }
 
+        request.setAttribute("departmentList", doctorManager.findDepartmentList()); // 왼쪽 진료과 메뉴
         request.getRequestDispatcher("/WEB-INF/views/search/doctor-list.jsp")
             .forward(request, response);
     }
