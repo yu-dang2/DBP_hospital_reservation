@@ -2,6 +2,9 @@ package hospital.controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import hospital.model.domain.Doctor;
@@ -76,7 +79,39 @@ public class AdminReservationController extends HttpServlet {
     //1. 예약 현황 목록(GET, action=listReservations)
     private void listReservations(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException{
-    	List<Reservation> reservationList = reservationManager.findReservationList(null, null, null);
+    	Date date = null;
+    	String dateParam = request.getParameter("searchDate");
+    	if (dateParam != null && !dateParam.trim().isEmpty()) {
+    		try {
+    			SimpleDateFormat  dayFormat= new SimpleDateFormat("yyyy-MM-dd");
+    			dayFormat.setLenient(false);
+    			date = dayFormat.parse(dateParam);
+    		}catch (ParseException e) {
+    			request.setAttribute("errorMessage", "올바르지 않은 날짜입니다.");
+    		}
+    	}
+    		
+		Long doctorId = null;
+		String doctorIdParam = request.getParameter("searchDoctorId");
+		if (doctorIdParam != null && !doctorIdParam.trim().isEmpty()) {
+		    try {
+		        doctorId = Long.parseLong(doctorIdParam.trim());
+		    } catch (NumberFormatException e) {
+		        request.setAttribute("errorMessage", "올바르지 않은 의사 번호입니다.");
+		    }
+		}
+    		
+		ReservationStatus status = null;
+		String statusParam = request.getParameter("searchStatus");
+		if (statusParam != null && !statusParam.trim().isEmpty()) {
+		    try {
+		        status = ReservationStatus.valueOf(statusParam);
+		    } catch (IllegalArgumentException e) {
+		        request.setAttribute("errorMessage", "올바르지 않은 예약 상태입니다.");
+		    }
+		}
+    	
+    	List<Reservation> reservationList = reservationManager.findReservationList(date, doctorId, status);
     	List<Doctor> doctorList = doctorManager.findDoctorList();
     	
     	request.setAttribute("reservationList", reservationList);
