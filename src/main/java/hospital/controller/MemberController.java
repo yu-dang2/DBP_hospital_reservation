@@ -27,7 +27,7 @@ import hospital.model.manager.MemberManager;
 @WebServlet({
         "/members",
         "/members/new",
-        "/members/id-check",
+        "/members/idcheck",
         "/members/me",
         "/members/me/edit",
         "/members/me/withdraw"
@@ -53,7 +53,7 @@ public class MemberController extends HttpServlet {
             throws ServletException, IOException {
         switch (req.getServletPath()) {
             case "/members/new":         showSignUpForm(req, resp); break; //회원가입 화면
-            case "/members/id-check":    checkUserId(req, resp); break; //아이디 중복 확인
+            case "/members/idcheck":    checkUserId(req, resp); break; //아이디 중복 확인
             case "/members/me":          showMyPage(req, resp); break; //마이페이지 표시
             case "/members/me/edit":     showEditForm(req, resp); break; //회원정보 수정 화면
             case "/members/me/withdraw": showWithdrawForm(req, resp); break; //회원 탈퇴 화면
