@@ -6,6 +6,8 @@ import java.util.List;
 
 import hospital.model.domain.Doctor;
 import hospital.model.domain.Reservation;
+import hospital.model.domain.ReservationStatus;
+import hospital.model.exception.InvalidStatusChangeException;
 import hospital.model.manager.DoctorManager;
 import hospital.model.manager.ReservationManager;
 import jakarta.servlet.ServletException;
@@ -105,7 +107,27 @@ public class AdminReservationController extends HttpServlet {
     //3. 예약 상태 변경(POST, action=changeStatus)
     private void changeStatus(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException{
-    	//todo
+    	Long reservationId = parseIdParameter(request, response, "reservationId");
+    	
+    	if(reservationId == null) {
+    		return;
+    	}
+    	
+    	ReservationStatus status;
+    	try {
+    		status = ReservationStatus.valueOf(request.getParameter("status"));
+    	}catch(IllegalArgumentException | NullPointerException e) {
+    		response.sendError(HttpServletResponse.SC_BAD_REQUEST, "올바르지 않은 예약 상태입니다.");
+    		return;
+    	}
+    	
+    	try {
+    		reservationManager.changeStatus(reservationId, status);
+    		response.sendRedirect(request.getContextPath() + "/admin/reservation/?action=listReservations");
+    	}catch(InvalidStatusChangeException ex) {
+    		request.setAttribute("errorMessage", ex.getMessage());
+    		listReservations(request, response);
+    	}
     }
     
     //4. 진료기록 등록(POST, action=createRecord)
