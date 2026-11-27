@@ -167,7 +167,6 @@ public class AdminReservationController extends HttpServlet {
     	}catch (ExistingMedicalRecordException ex) {
     		request.setAttribute("diagnosis", diagnosis);
     		request.setAttribute("prescription", prescription);
-    		
     		request.setAttribute("errorMessage", ex.getMessage());
     		showRecordForm(request, response);
     	}
