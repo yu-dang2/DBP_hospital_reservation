@@ -12,5 +12,17 @@
 	<p>의사 이름: ${reservation.doctor.name}</p>
 	<p>상태: ${reservation.status}</p>
 	
+	<form method="post" action = "${pageContext.request.contextPath}/admin/reservation/">
+		<input type = "hidden" name="action" value="createRecord">
+		<input type = "hidden" name="reservationId" value="${reservation.reservationId}">
+		
+		<textarea name="diagnosis" placeholder="진단 내용">${diagnosis}</textarea>
+		<textarea name="prescription" placeholder="처방 내용">${prescription}</textarea>
+		
+		<button type="submit">완료</button>
+		
+	</form>
+	
+	<p style="color:red">${errorMessage}</p>
 </body>
 </html>

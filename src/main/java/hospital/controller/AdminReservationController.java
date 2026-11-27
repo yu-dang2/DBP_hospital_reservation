@@ -5,8 +5,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 import hospital.model.domain.Doctor;
+import hospital.model.domain.MedicalRecord;
 import hospital.model.domain.Reservation;
 import hospital.model.domain.ReservationStatus;
+import hospital.model.exception.ExistingMedicalRecordException;
 import hospital.model.exception.InvalidStatusChangeException;
 import hospital.model.manager.DoctorManager;
 import hospital.model.manager.ReservationManager;
@@ -133,7 +135,42 @@ public class AdminReservationController extends HttpServlet {
     //4. 진료기록 등록(POST, action=createRecord)
     private void createRecord(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException{
-    	//todo
+    	Long reservationId = parseIdParameter(request, response, "reservationId");
+
+    	if (reservationId == null) {
+    	    return;
+    	}
+    	
+    	String diagnosis = request.getParameter("diagnosis");
+    	String prescription = request.getParameter("prescription");
+    	
+    	if (diagnosis == null || diagnosis.trim().isEmpty()) {
+    		request.setAttribute("diagnosis", diagnosis);
+    	    request.setAttribute("prescription", prescription);
+    		request.setAttribute("errorMessage", "진단 내용을 입력해 주세요.");
+    	    showRecordForm(request, response);
+    	    return;
+    	}
+    	Reservation reservation = new Reservation();
+    	MedicalRecord medicalRecord = new MedicalRecord();
+    	
+    	reservation.setReservationId(reservationId);
+    	medicalRecord.setReservation(reservation);
+    	medicalRecord.setDiagnosis(diagnosis);
+    	medicalRecord.setPrescription(prescription);
+    	
+    
+    	
+    	try {    		
+    		reservationManager.createMedicalRecord(medicalRecord);
+    		response.sendRedirect(request.getContextPath() + "/admin/reservation/?action=listReservations");
+    	}catch (ExistingMedicalRecordException ex) {
+    		request.setAttribute("diagnosis", diagnosis);
+    		request.setAttribute("prescription", prescription);
+    		
+    		request.setAttribute("errorMessage", ex.getMessage());
+    		showRecordForm(request, response);
+    	}
     }
     
     // 요청 파라미터의 ID 검증 
