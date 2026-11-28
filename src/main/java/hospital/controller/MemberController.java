@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Calendar;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -364,9 +365,16 @@ public class MemberController extends HttpServlet {
         if (name.length() > NAME_MAX) {
             return "이름은 50자 이하로 입력해 주세요.";
         }
-        if (!isBlank(birthText) && parseBirth(birthText) == null) {
+         if (!isBlank(birthText)) {
+        Date birth = parseBirth(birthText);
+        if (birth == null) {
             return "생년월일을 올바르게 입력해 주세요.";
         }
+        if (isFutureDate(birth)) {
+            return "생년월일이 올바르지 않습니다.";
+        }
+        }
+        
         if (!isBlank(password)) {
             if (password.length() < PASSWORD_MIN) {
                 return "비밀번호는 " + PASSWORD_MIN + "자 이상이어야 합니다.";
@@ -443,6 +451,7 @@ public class MemberController extends HttpServlet {
             return null;
         }
     }
+    
     // 문자열을 JSON용으로 이스케이프 처리
     private static String escapeJson(String s) {
         return s == null ? "" : s.replace("\\", "\\\\").replace("\"", "\\\"");
@@ -459,4 +468,13 @@ public class MemberController extends HttpServlet {
     private static String nullIfBlank(String s) {
         return isBlank(s) ? null : s.trim();
     }
+    // 주어진 날짜가 오늘 이후인지 확인 (오늘 자정 이후면 미래로 판단)
+    private boolean isFutureDate(Date date) {
+    Calendar today = Calendar.getInstance();
+    today.set(Calendar.HOUR_OF_DAY, 0);
+    today.set(Calendar.MINUTE, 0);
+    today.set(Calendar.SECOND, 0);
+    today.set(Calendar.MILLISECOND, 0);
+    return date.after(today.getTime());
+}
 }
