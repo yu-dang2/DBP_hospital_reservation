@@ -72,7 +72,7 @@ public class MemberManager {
         if (!member.isActive()) {
             return AuthenticationResult.fail("탈퇴한 계정입니다.");
         }
-        return AuthenticationResult.success(member.getMemberId(), member.getRole().name());
+        return AuthenticationResult.success(member.getMemberId(), member.getRole());
     }
 
     // 마이페이지 회원 조회시 사용
@@ -149,24 +149,25 @@ private ReservationSummary toSummary(Reservation reservation) {
     // 예정된 예약이 없을 경우만 탈퇴로 변경
     public MemberOperationResult withdraw(Long memberId, String password) throws SQLException {
 
-        ReservationDAO reservationDAO = new ReservationDAO();
+        MemberDAO memberDAO = new MemberDAO();
 
-        Member current = memberDAO.findById(memberId);
-        if (current == null || !current.isActive()) {
-            return MemberOperationResult.fail("회원 정보를 찾을 수 없습니다.");
+        Member member = memberDAO.findById(memberId);
+        if (member == null || !member.isActive()) {
+        return MemberOperationResult.fail("회원 정보를 찾을 수 없습니다.");
         }
-        if (!matches(password, current.getPassword())) {
-            return MemberOperationResult.fail("비밀번호가 일치하지 않습니다.");
+        if (!isBlank(password) && !matches(password, member.getPassword())) {
+        return MemberOperationResult.fail("비밀번호가 일치하지 않습니다.");
         }
-        if (reservationDAO.existsUpcomingByMemberId(memberId)) {
-            return MemberOperationResult.fail("예정된 예약이 있어 탈퇴할 수 없습니다. 예약을 먼저 취소해 주세요.");
+        int code = memberDAO.withdrawIfNoUpcoming(memberId);
+        switch (code) {
+        case MemberDAO.WITHDRAW_OK:
+            return MemberOperationResult.ok("회원 탈퇴가 완료되었습니다.");
+        case MemberDAO.WITHDRAW_HAS_UPCOMING:
+            return MemberOperationResult.fail("예정된 진료 예약이 있어 탈퇴할 수 없습니다. 예약을 먼저 취소해 주세요.");
+        default:
+            return MemberOperationResult.fail("회원 탈퇴 처리에 실패했습니다.");
         }
-        if (memberDAO.markWithdrawn(memberId) != 1) {
-            return MemberOperationResult.fail("탈퇴 처리에 실패했습니다. 다시 시도해 주세요.");
-        }
-        return MemberOperationResult.ok("회원 탈퇴가 완료되었습니다.");
     }
-
 
     // 가입시 입력한 값 검사
     private String validateSignUp(Member member) {

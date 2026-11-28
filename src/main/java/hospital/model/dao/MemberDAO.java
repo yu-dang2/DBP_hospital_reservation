@@ -159,7 +159,62 @@ public class MemberDAO {
             jdbcUtil.close();
         }
     }
+    // 탈퇴 결과 코드
 
+    public static final int WITHDRAW_OK = 1;             // 탈퇴 완료
+    public static final int WITHDRAW_NOT_ACTIVE = 0;     // 회원이 없거나 ACTIVE가 아님
+    public static final int WITHDRAW_HAS_UPCOMING = -1;  // 예정된 예약이 있어 탈퇴 불가
+
+    // 회원 탈퇴 처리. 예정된 예약이 없을 경우만 탈퇴로 변경
+    public int withdrawIfNoUpcoming(Long memberId) throws SQLException {
+    JDBCUtil jdbcUtil = new JDBCUtil();
+    try {
+        // 1. 회원 잠금: STATUS가 ACTIVE인지 확인 후 FOR UPDATE
+        jdbcUtil.setSqlAndParameters(
+                "SELECT STATUS FROM MEMBER WHERE MEMBER_ID = ? FOR UPDATE",
+                new Object[] { memberId });
+        ResultSet rs = jdbcUtil.executeQuery();
+        if (rs == null) {
+            throw new SQLException("회원 잠금 조회 실패: memberId=" + memberId);
+        }
+        if (!rs.next() || !MemberStatus.ACTIVE.getCode().equals(rs.getString("STATUS"))) {
+            jdbcUtil.rollback();
+            return WITHDRAW_NOT_ACTIVE;
+        }
+
+        // 2. 예정 예약 확인: 예약 상태가 RESERVED이고 예약일이 오늘 이후인 경우 탈퇴 불가
+        jdbcUtil.setSqlAndParameters(
+                "SELECT COUNT(*) AS CNT FROM RESERVATION "
+              + "WHERE MEMBER_ID = ? AND STATUS = 'RESERVED' AND RESERVATION_DATE >= SYSDATE",
+                new Object[] { memberId });
+        rs = jdbcUtil.executeQuery();
+        if (rs == null) {
+            throw new SQLException("예정 예약 확인 실패: memberId=" + memberId);
+        }
+        rs.next();
+        if (rs.getInt("CNT") > 0) {
+            jdbcUtil.rollback();
+            return WITHDRAW_HAS_UPCOMING;
+        }
+
+        // 3. 상태를 WITHDRAWN으로 변경 후 커밋
+        jdbcUtil.setSqlAndParameters(
+                "UPDATE MEMBER SET STATUS = ? WHERE MEMBER_ID = ? AND STATUS = ?",
+                new Object[] { MemberStatus.WITHDRAWN.getCode(), memberId, MemberStatus.ACTIVE.getCode() });
+        int rows = jdbcUtil.executeUpdate();
+        jdbcUtil.commit();
+        return rows == 1 ? WITHDRAW_OK : WITHDRAW_NOT_ACTIVE;
+
+        } catch (SQLException ex) {
+        jdbcUtil.rollback();
+        throw ex;
+        } catch (Exception ex) {
+        jdbcUtil.rollback();
+        throw new SQLException(ex);
+        } finally {
+        jdbcUtil.close();
+        }
+    }
     // ---------- private ----------
 
     private long nextMemberId() throws SQLException {
